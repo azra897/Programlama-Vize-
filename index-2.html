@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Türk halk anlatı geleneğinden derlenmiş sekiz masal.">
+<title>Bir Varmış Bir Yokmuş | Türk Masalları Derlemesi</title>
+<!-- Sekmede görünen küçük simge: lale motifi (internet gerektirmez, kodun içinde) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%239B1C1F'%3E%3Cpath d='M20 3C24.5 9 24.5 17 20 24C15.5 17 15.5 9 20 3Z'/%3E%3Cpath d='M20 24C11.5 24 7.5 16 8.5 7.5C13 11.5 17 15.5 20 24Z'/%3E%3Cpath d='M20 24C28.5 24 32.5 16 31.5 7.5C27 11.5 23 15.5 20 24Z'/%3E%3Crect x='19' y='23' width='2' height='15'/%3E%3C/g%3E%3C/svg%3E">
+
+<style>
+/* =========================================================
+   İÇSEL CSS
+   Bölümler:
+   1. Renkler ve değişkenler (gündüz ve gece teması)
+   2. Genel ayarlar
+   3. Üst bölüm (başlık) ve kilim şeridi
+   4. Arama, süzme düğmeleri ve masal kartları
+   5. Okuma ekranı
+   6. Alt bilgi
+   7. Telefon ekranı (duyarlı tasarım)
+   ========================================================= */
+
+/* ---------- 1. RENKLER VE DEĞİŞKENLER ---------- */
+:root {
+  /* Kök boya kırmızısı: halı ve kilimlerde en çok kullanılan renk */
+  --kirmizi: #9B1C1F;
+  --baslik-zemin: #8E1A1D;
+  /* Aşı boyası / altın sarısı: vurgu rengi */
+  --altin: #C8963E;
+  /* Çivit mavisi: kilim motiflerinde dengeleyici renk */
+  --lacivert: #1F2A44;
+  /* Eski kâğıt rengi zemin: uzun okumada beyazdan daha az yorar */
+  --kagit: #F6EEDF;
+  --kart: #FFFAF2;
+  /* Metin rengi: saf siyah yerine koyu kahve (mürekkep) */
+  --murekkep: #2A1B15;
+  --soluk: #6B5448;
+  --cizgi: #E2D3BC;
+  --dugme-yazi: #FFF8EE;
+  --golge: 0 1px 2px rgba(42, 27, 21, .08), 0 6px 18px rgba(42, 27, 21, .08);
+
+  /* Okuma ayarları: JavaScript bu iki değeri değiştirir */
+  --okuma-boyutu: 1.15rem;
+  --satir-araligi: 1.75;
+
+  /* Sistem yazı tipleri: internetsiz çalışması için dışarıdan yazı tipi yüklenmez */
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Gece teması: aynı değişkenlerin koyu karşılıkları */
+[data-tema="gece"] {
+  --kirmizi: #E8776B;
+  --baslik-zemin: #4A0D10;
+  --kagit: #17110F;
+  --kart: #221916;
+  --murekkep: #EDE2D1;
+  --soluk: #B9A897;
+  --cizgi: #3A2C26;
+  --dugme-yazi: #17110F;
+  --golge: 0 1px 2px rgba(0, 0, 0, .4), 0 6px 18px rgba(0, 0, 0, .35);
+}
+
+/* ---------- 2. GENEL AYARLAR ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--kagit);
+  color: var(--murekkep);
+  font-family: var(--sans);
+  line-height: 1.5;
+  transition: background-color .3s, color .3s;
+}
+
+/* Klavyeyle gezinenler için belirgin odak çerçevesi */
+:focus-visible { outline: 3px solid var(--altin); outline-offset: 2px; }
+
+/* Ekranda görünmeyen ama ekran okuyucunun okuduğu metin */
+.gorunmez {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* "İçeriğe geç" bağlantısı: yalnızca Tab ile odaklanınca görünür */
+.atla {
+  position: absolute; left: -999px; top: 1rem; z-index: 100;
+  background: var(--kart); color: var(--murekkep); padding: .6rem 1rem; border-radius: 6px;
+}
+.atla:focus { left: 1rem; }
+
+/* SVG tanımlarını tutan gizli kutu (display:none kullanılmaz, desenler bozulmasın) */
+.svg-tanimlar { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* Okurken en üstte ilerlemeyi gösteren ince çubuk */
+.ilerleme {
+  position: fixed; top: 0; left: 0; z-index: 50;
+  width: 100%; height: 4px;
+  background: var(--altin);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+/* Ortak düğme görünümü */
+.dugme {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font: inherit; font-weight: 600; font-size: .95rem;
+  padding: .7rem 1.15rem;
+  border: 2px solid var(--kirmizi); border-radius: 6px;
+  background: var(--kirmizi); color: var(--dugme-yazi);
+  text-decoration: none; cursor: pointer;
+  transition: filter .2s, transform .2s;
+}
+.dugme:hover { filter: brightness(1.1); }
+.dugme:active { transform: translateY(1px); }
+.dugme-ikincil { background: transparent; color: var(--kirmizi); }
+.dugme svg { width: 18px; height: 18px; }
+
+/* ---------- 3. ÜST BÖLÜM VE KİLİM ŞERİDİ ---------- */
+.ust { background: var(--baslik-zemin); color: #F6EEDF; position: relative; }
+
+.ust-tema {
+  position: absolute; top: 1rem; right: 1rem;
+  font: inherit; font-size: .85rem; cursor: pointer;
+  background: transparent; color: #F6EEDF;
+  border: 1.5px solid rgba(246, 238, 223, .55); border-radius: 999px;
+  padding: .35rem .9rem;
+}
+.ust-tema[aria-pressed="true"] { background: rgba(246, 238, 223, .15); }
+
+.ust-ic {
+  max-width: 60rem; margin: 0 auto;
+  padding: 3.25rem 1.25rem 2.25rem;
+  text-align: center;
+}
+.amblem { width: 68px; height: 68px; }
+.ust-kucuk {
+  margin: .75rem 0 0;
+  font-size: .8rem; letter-spacing: .18em; text-transform: uppercase;
+  color: #E9C98B;
+}
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.3rem, 7vw, 3.8rem);
+  font-weight: 700; line-height: 1.1;
+  margin: .35rem 0 .75rem;
+}
+.tekerleme {
+  font-family: var(--serif); font-style: italic; font-size: 1.1rem;
+  max-width: 36rem; margin: 0 auto; color: #F3E3CC;
+}
+
+/* Kilim şeridi: deseni SVG <pattern> ile tanımlanır, yan yana tekrar eder */
+.kilim-serit { display: block; width: 100%; height: 28px; }
+
+/* Koçboynuzu motifli bölüm ayracı: iki yanındaki çizgiler CSS ile çizilir */
+.ayrac {
+  display: flex; align-items: center; gap: 1rem;
+  margin: 1.5rem 0; color: var(--kirmizi);
+}
+.ayrac::before, .ayrac::after { content: ""; flex: 1; height: 1px; background: var(--cizgi); }
+.ayrac svg { width: 60px; height: 30px; flex: none; }
+
+/* ---------- 4. ARAMA, SÜZME VE KARTLAR ---------- */
+main { max-width: 68rem; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+.devam-kutusu {
+  display: flex; flex-wrap: wrap; gap: .75rem 1.25rem;
+  align-items: center; justify-content: space-between;
+  background: var(--kart);
+  border: 1px solid var(--cizgi); border-left: 5px solid var(--altin);
+  border-radius: 6px;
+  padding: 1rem 1.25rem; margin-bottom: 1.75rem;
+}
+.devam-kutusu p { margin: 0; }
+
+.bolum-basligi {
+  font-family: var(--serif); font-size: 1.9rem;
+  text-align: center; margin: 0;
+  color: var(--murekkep);
+}
+.bolum-aciklama { text-align: center; color: var(--soluk); margin: .25rem 0 0; }
+
+.arac-cubugu { display: grid; gap: 1rem; margin: 1.5rem 0 .5rem; }
+.arama-satiri { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.arama-kutusu { position: relative; flex: 1 1 18rem; }
+.arama-kutusu svg {
+  position: absolute; left: .9rem; top: 50%; transform: translateY(-50%);
+  width: 20px; height: 20px; color: var(--soluk); pointer-events: none;
+}
+#arama {
+  width: 100%;
+  font: inherit; font-size: 1rem;
+  padding: .8rem 1rem .8rem 2.8rem;
+  border: 2px solid var(--cizgi); border-radius: 6px;
+  background: var(--kart); color: var(--murekkep);
+}
+#arama::placeholder { color: var(--soluk); }
+#arama:focus { outline: none; border-color: var(--kirmizi); box-shadow: 0 0 0 3px rgba(200, 150, 62, .35); }
+
+.kategoriler { display: flex; flex-wrap: wrap; gap: .5rem; }
+.etiket-dugme {
+  font: inherit; font-size: .92rem; cursor: pointer;
+  padding: .45rem .95rem;
+  border: 1.5px solid var(--cizgi); border-radius: 999px;
+  background: var(--kart); color: var(--murekkep);
+  transition: background-color .2s, border-color .2s;
+}
+.etiket-dugme:hover { border-color: var(--kirmizi); }
+.etiket-dugme[aria-pressed="true"] {
+  background: var(--kirmizi); border-color: var(--kirmizi); color: var(--dugme-yazi);
+}
+.etiket-dugme .sayi { margin-left: .4rem; opacity: .75; font-size: .85em; }
+
+.sonuc-sayisi { color: var(--soluk); font-size: .95rem; margin: .75rem 0 1.25rem; }
+
+.masal-listesi {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+}
+
+.kart {
+  display: flex; flex-direction: column; height: 100%;
+  background: var(--kart); color: inherit; text-decoration: none;
+  border: 1px solid var(--cizgi); border-radius: 8px; overflow: hidden;
+  box-shadow: var(--golge);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.kart:hover { transform: translateY(-3px); border-color: var(--kirmizi); }
+.kart:hover h3 { color: var(--kirmizi); }
+
+/* Kartın üstündeki zikzak: kilimlerdeki "su yolu" motifi, yalnızca CSS gradyanla çizilir */
+.zikzak {
+  height: 10px; flex: none;
+  background:
+    linear-gradient(135deg, var(--kirmizi) 25%, transparent 25%) -5px 0 / 10px 10px,
+    linear-gradient(225deg, var(--kirmizi) 25%, transparent 25%) -5px 0 / 10px 10px;
+}
+
+.kart-govde { display: flex; flex-direction: column; gap: .6rem; flex: 1; padding: 1.1rem 1.25rem 1.2rem; }
+.kart-ust { display: flex; align-items: center; gap: .8rem; }
+
+/* Sıra numarası, kilimdeki göz motifinin (eşkenar dörtgen) içinde durur */
+.rozet { position: relative; width: 46px; height: 46px; flex: none; color: var(--kirmizi); }
+.rozet svg { width: 100%; height: 100%; }
+.rozet span {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 700; color: var(--dugme-yazi);
+}
+.kart-tur { font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; color: var(--soluk); }
+.kart h3 { font-family: var(--serif); font-size: 1.35rem; line-height: 1.25; margin: 0; transition: color .2s; }
+.kart .ozet { margin: 0; line-height: 1.55; }
+.kart .parca {
+  margin: 0; font-size: .9rem; font-style: italic; color: var(--soluk);
+  border-left: 3px solid var(--altin); padding-left: .6rem;
+}
+.kart-alt {
+  margin-top: auto; padding-top: .75rem;
+  display: flex; justify-content: space-between; align-items: center; gap: .5rem;
+  border-top: 1px dashed var(--cizgi);
+  font-size: .88rem; color: var(--soluk);
+}
+.kart-alt .oku { color: var(--kirmizi); font-weight: 700; }
+.durum-etiketi {
+  display: inline-block; margin-left: .4rem; padding: .05rem .5rem;
+  border-radius: 999px; font-size: .78rem;
+  background: var(--kagit); border: 1px solid var(--cizgi); color: var(--soluk);
+}
+
+/* Aramada bulunan kelimelerin vurgusu */
+mark { background: #F2D79B; color: #2A1B15; padding: 0 .1em; border-radius: 2px; }
+
+.bos-sonuc {
+  text-align: center; padding: 2.5rem 1rem;
+  border: 2px dashed var(--cizgi); border-radius: 8px; color: var(--soluk);
+}
+.bos-sonuc p { margin: 0 0 1rem; }
+
+/* ---------- 5. OKUMA EKRANI ---------- */
+.okuma-araclari {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; flex-wrap: wrap; gap: .6rem; justify-content: space-between; align-items: center;
+  background: var(--kagit);
+  padding: .8rem 0; border-bottom: 1px solid var(--cizgi);
+}
+.ayarlar { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+.ayarlar-etiket { font-size: .85rem; color: var(--soluk); margin-right: .2rem; }
+.arac-dugme {
+  font: inherit; font-size: .9rem; cursor: pointer;
+  min-width: 2.75rem; padding: .45rem .75rem;
+  border: 1.5px solid var(--cizgi); border-radius: 6px;
+  background: var(--kart); color: var(--murekkep);
+}
+.arac-dugme:hover:not(:disabled) { border-color: var(--kirmizi); }
+.arac-dugme:disabled { opacity: .4; cursor: not-allowed; }
+.arac-dugme[aria-pressed="true"] { border-color: var(--kirmizi); color: var(--kirmizi); font-weight: 700; }
+
+.sayfa {
+  max-width: 42rem; margin: 2rem auto 0;
+  background: var(--kart);
+  border: 1px solid var(--cizgi); border-radius: 8px; overflow: hidden;
+  box-shadow: var(--golge);
+}
+.sayfa-ic { padding: clamp(1.5rem, 5vw, 3.25rem); }
+
+.okuma-ust {
+  margin: 0; text-align: center;
+  font-size: .78rem; letter-spacing: .15em; text-transform: uppercase; color: var(--soluk);
+}
+#okuma-baslik {
+  font-family: var(--serif); text-align: center;
+  font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.15;
+  margin: .4rem 0 .5rem; color: var(--kirmizi);
+}
+#okuma-baslik:focus { outline: none; }
+.okuma-bilgi { margin: 0; text-align: center; font-size: .9rem; color: var(--soluk); }
+
+.acilis, .kapanis {
+  font-family: var(--serif); font-style: italic; text-align: center;
+  font-size: calc(var(--okuma-boyutu) * .95);
+  color: var(--soluk); margin: 0 0 1.5rem;
+}
+.kapanis { margin: 1.75rem 0 0; }
+
+/* Okuma metni: satır uzunluğu en fazla ~65 karakter, boyut ve satır aralığı değişkenden gelir */
+.okuma-metin p {
+  font-family: var(--serif);
+  font-size: var(--okuma-boyutu);
+  line-height: var(--satir-araligi);
+  margin: 0 0 1.1em;
+  max-width: 65ch;
+}
+/* İlk harf büyük ve kırmızı: eski el yazması kitaplardaki süslü baş harf geleneği */
+.okuma-metin p:first-child::first-letter {
+  float: left;
+  font-size: 3.3em; line-height: .85; font-weight: 700;
+  padding: .06em .12em 0 0;
+  color: var(--kirmizi);
+}
+
+.ders {
+  margin-top: 2rem; padding: 1rem 1.25rem;
+  background: var(--kagit);
+  border-left: 4px solid var(--altin); border-radius: 0 6px 6px 0;
+}
+.ders h3 {
+  margin: 0 0 .3rem;
+  font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--soluk);
+}
+.ders p { margin: 0; font-family: var(--serif); font-size: 1.08rem; }
+
+.masal-gezinme {
+  max-width: 42rem; margin: 1.5rem auto 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+}
+.gezinme-baglanti {
+  display: flex; flex-direction: column; gap: .15rem;
+  padding: 1rem 1.15rem;
+  background: var(--kart); color: var(--murekkep); text-decoration: none;
+  border: 1px solid var(--cizgi); border-radius: 8px;
+  transition: border-color .2s;
+}
+.gezinme-baglanti:hover { border-color: var(--kirmizi); }
+.gezinme-baglanti small { font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--soluk); }
+.gezinme-baglanti strong { font-family: var(--serif); font-size: 1.12rem; color: var(--kirmizi); }
+#sonraki { grid-column: 2; text-align: right; }
+
+.kisayol-ipucu { text-align: center; font-size: .85rem; color: var(--soluk); margin: 1.5rem 0 0; }
+kbd {
+  font-family: var(--sans); font-size: .8em;
+  padding: .1em .45em; border-radius: 4px;
+  border: 1px solid var(--cizgi); background: var(--kart);
+}
+
+/* ---------- 6. ALT BİLGİ ---------- */
+.alt { background: var(--baslik-zemin); color: #F3E3CC; margin-top: 3rem; }
+
+/* ---------- 7. TELEFON EKRANI ---------- */
+@media (max-width: 640px) {
+  .ust-ic { padding: 3.5rem 1rem 1.75rem; }
+  .ust-tema { top: .75rem; right: .75rem; }
+  .tekerleme { font-size: 1rem; }
+  main { padding: 1.5rem 1rem 2.5rem; }
+  .arama-satiri .dugme { width: 100%; justify-content: center; }
+  .okuma-araclari { padding: .6rem 0; }
+  .ayarlar-etiket { display: none; }
+  .sayfa { margin-top: 1.25rem; border-left: none; border-right: none; border-radius: 0; }
+  .masal-gezinme { grid-template-columns: 1fr; }
+  #sonraki { grid-column: auto; }
+  .kisayol-ipucu { display: none; }   /* telefonda klavye kısayolu yok */
+}
+
+/* Hareketi azaltmak isteyen kullanıcılar için geçişleri kapat */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+
+<body>
+<a class="atla" href="#icerik">İçeriğe geç</a>
+<div class="ilerleme" id="ilerleme" aria-hidden="true"></div>
+
+<!-- =========================================================
+     SVG TANIMLARI: motifler bir kez çizilir, sayfada <use> ile tekrar kullanılır
+     ========================================================= -->
+<svg class="svg-tanimlar" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Kilim deseni: üstte ve altta zikzak (su yolu), ortada "göz" motifleri (nazardan koruma) -->
+    <pattern id="kilim" width="56" height="28" patternUnits="userSpaceOnUse">
+      <rect width="56" height="28" fill="#5E0F12"/>
+      <path d="M0 0L7 5L14 0L21 5L28 0L35 5L42 0L49 5L56 0Z" fill="#C8963E"/>
+      <path d="M0 28L7 23L14 28L21 23L28 28L35 23L42 28L49 23L56 28Z" fill="#C8963E"/>
+      <path d="M14 8L20 14L14 20L8 14Z" fill="#F6EEDF"/>
+      <path d="M14 11L17 14L14 17L11 14Z" fill="#9B1C1F"/>
+      <path d="M42 8L48 14L42 20L36 14Z" fill="#C8963E"/>
+      <path d="M42 11L45 14L42 17L39 14Z" fill="#1F2A44"/>
+      <circle cx="28" cy="14" r="1.8" fill="#F6EEDF"/>
+      <circle cx="0" cy="14" r="1.8" fill="#F6EEDF"/>
+      <circle cx="56" cy="14" r="1.8" fill="#F6EEDF"/>
+    </pattern>
+
+    <!-- Göz motifi: kilimlerdeki iç içe eşkenar dörtgen, nazardan korunmayı simgeler -->
+    <symbol id="goz" viewBox="0 0 40 40">
+      <path d="M20 1L39 20L20 39L1 20Z" fill="currentColor"/>
+      <path d="M20 6.5L33.5 20L20 33.5L6.5 20Z" fill="none" stroke="#FFF8EE" stroke-opacity=".45" stroke-width="1.2"/>
+    </symbol>
+
+    <!-- Lale motifi: Türk süsleme sanatının en bilinen çiçeği -->
+    <symbol id="lale" viewBox="0 0 40 40">
+      <path d="M20 3C24.5 9 24.5 17 20 24C15.5 17 15.5 9 20 3Z" fill="currentColor"/>
+      <path d="M20 24C11.5 24 7.5 16 8.5 7.5C13 11.5 17 15.5 20 24Z" fill="currentColor"/>
+      <path d="M20 24C28.5 24 32.5 16 31.5 7.5C27 11.5 23 15.5 20 24Z" fill="currentColor"/>
+      <path d="M20 24V38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M20 35C15 34.5 11.5 31.5 10.5 27.5C15 28.5 18.5 31 20 35Z" fill="currentColor"/>
+      <path d="M20 35C25 34.5 28.5 31.5 29.5 27.5C25 28.5 21.5 31 20 35Z" fill="currentColor"/>
+    </symbol>
+
+    <!-- Koçboynuzu motifi: güç ve bereketin simgesi -->
+    <symbol id="kocboynuzu" viewBox="0 0 80 40">
+      <path d="M40 34V16M40 16C40 6 24 4 22 14C20 22 30 25 32 18M40 16C40 6 56 4 58 14C60 22 50 25 48 18"
+            fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M40 30L44 34L40 38L36 34Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- =========================================================
+     ÜST BÖLÜM
+     ========================================================= -->
+<header class="ust">
+  <button type="button" class="ust-tema tema-dugme" aria-pressed="false">Gece modu</button>
+  <div class="ust-ic">
+    <svg class="amblem" aria-hidden="true" focusable="false"><use href="#lale" style="color:#C8963E"/></svg>
+    <p class="ust-kucuk">Türk halk anlatılarından bir derleme</p>
+    <h1>Bir Varmış Bir Yokmuş</h1>
+    <p class="tekerleme">Az gittik, uz gittik, dere tepe düz gittik; Keloğlan’dan sihirli ineğe, dilden dile dolaşan sekiz masal.</p>
+  </div>
+  <svg class="kilim-serit" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="url(#kilim)"/></svg>
+</header>
+
+<main id="icerik">
+
+  <!-- =========================================================
+       LİSTE EKRANI
+       ========================================================= -->
+  <section id="liste-ekrani" aria-labelledby="liste-basligi">
+
+    <div class="devam-kutusu" id="devam-kutusu" hidden>
+      <p>En son <strong id="devam-baslik"></strong> masalını okuyordun, <span id="devam-oran"></span> kısmını bitirmiştin.</p>
+      <a class="dugme" id="devam-baglanti" href="#/">Kaldığın yerden devam et</a>
+    </div>
+
+    <h2 class="bolum-basligi" id="liste-basligi">Masallar</h2>
+    <p class="bolum-aciklama">Bir masal seç, ara ya da türüne göre süz.</p>
+    <div class="ayrac" aria-hidden="true"><svg><use href="#kocboynuzu"/></svg></div>
+
+    <div class="arac-cubugu">
+      <div class="arama-satiri">
+        <div class="arama-kutusu">
+          <label for="arama" class="gorunmez">Masallarda ara</label>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="search" id="arama" autocomplete="off" placeholder="Masal, kahraman ya da kelime ara (örneğin: dev, kabak, horoz)">
+        </div>
+        <button type="button" class="dugme dugme-ikincil" id="rastgele">Bana bir masal seç</button>
+      </div>
+      <div class="kategoriler" id="kategoriler" role="group" aria-label="Masalları türüne göre süz"></div>
+    </div>
+
+    <p class="sonuc-sayisi" id="sonuc-sayisi" aria-live="polite"></p>
+    <ol class="masal-listesi" id="masal-listesi"></ol>
+
+    <div class="bos-sonuc" id="bos-sonuc" hidden>
+      <p>Bu aramayla eşleşen bir masal bulunamadı. Başka bir kelime deneyebilir ya da süzmeyi kaldırabilirsin.</p>
+      <button type="button" class="dugme" id="temizle">Aramayı ve süzmeyi temizle</button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       OKUMA EKRANI
+       ========================================================= -->
+  <article id="okuma-ekrani" hidden aria-labelledby="okuma-baslik">
+    <div class="okuma-araclari" role="toolbar" aria-label="Okuma ayarları">
+      <a class="dugme dugme-ikincil" href="#/">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5L8 12L15 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Tüm masallar
+      </a>
+      <div class="ayarlar">
+        <span class="ayarlar-etiket">Yazı:</span>
+        <button type="button" class="arac-dugme" id="kucult" aria-label="Yazıyı küçült">A−</button>
+        <button type="button" class="arac-dugme" id="buyut" aria-label="Yazıyı büyüt">A+</button>
+        <button type="button" class="arac-dugme" id="satir" aria-pressed="false">Geniş satır</button>
+        <button type="button" class="arac-dugme tema-dugme" aria-pressed="false">Gece modu</button>
+      </div>
+    </div>
+
+    <div class="sayfa">
+      <div class="zikzak" aria-hidden="true"></div>
+      <div class="sayfa-ic">
+        <p class="okuma-ust" id="okuma-tur"></p>
+        <h2 id="okuma-baslik" tabindex="-1"></h2>
+        <p class="okuma-bilgi" id="okuma-bilgi"></p>
+        <div class="ayrac" aria-hidden="true"><svg><use href="#kocboynuzu"/></svg></div>
+        <p class="acilis" id="okuma-acilis"></p>
+        <div class="okuma-metin" id="okuma-metin"></div>
+        <p class="kapanis" id="okuma-kapanis"></p>
+        <aside class="ders">
+          <h3>Masaldan kalan</h3>
+          <p id="okuma-ders"></p>
+        </aside>
+      </div>
+    </div>
+
+    <nav class="masal-gezinme" aria-label="Masallar arasında gezinme">
+      <a class="gezinme-baglanti" id="onceki" href="#/"><small>Önceki masal</small><strong></strong></a>
+      <a class="gezinme-baglanti" id="sonraki" href="#/"><small>Sonraki masal</small><strong></strong></a>
+    </nav>
+    <p class="kisayol-ipucu">Klavye: <kbd>←</kbd> önceki, <kbd>→</kbd> sonraki masal, <kbd>Esc</kbd> listeye dön</p>
+  </article>
+</main>
+
+<!-- =========================================================
+     ALT BİLGİ
+     ========================================================= -->
+<footer class="alt">
+  <svg class="kilim-serit" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="url(#kilim)"/></svg>
+</footer>
+
+<noscript>
+  <p style="text-align:center;padding:1rem">Masalları okuyabilmek için tarayıcınızda JavaScript açık olmalıdır.</p>
+</noscript>
+
+<script>
+/* =========================================================
+   İÇSEL JAVASCRIPT
+   Bölümler:
+   1. Masal verileri
+   2. Sayfadaki öğeler
+   3. Tarayıcı hafızası (localStorage)
+   4. Yardımcı fonksiyonlar (Türkçe arama, vurgulama, okuma süresi)
+   5. Liste ekranı: süzme düğmeleri, arama, kartlar
+   6. Okuma ekranı: masalı gösterme, önceki/sonraki
+   7. Okuma ilerlemesi ve kaldığın yer
+   8. Okuma ayarları (yazı boyutu, satır aralığı, gece modu)
+   9. Sayfa yönlendirme (adres çubuğundaki # ile)
+   10. Klavye kısayolları ve başlatma
+   ========================================================= */
+"use strict";
+
+/* ---------- 1. MASAL VERİLERİ ---------- */
+const VARSAYILAN_ACILIS = "Bir varmış, bir yokmuş.";
+const VARSAYILAN_KAPANIS = "Onlar ermiş muradına, biz çıkalım kerevetine.";
+
+const MASALLAR = [
+  {
+    "id": "keloglan-ve-kabak-gelin",
+    "baslik": "Keloğlan ve Kabak Gelin",
+    "kategori": "Keloğlan",
+    "tur": "Türk halk masalı",
+    "ozet": "Tembelliği yüzünden işe gönderilen Keloğlan, emanet ettiği her şeyin peşine düşer ve sonunda annesine süslü bir kabağı gelin diye getirir.",
+    "metin": [
+      "Evvel zaman içinde, küçük bir köyde Keloğlan ve annesi yaşarmış. Annesi geçimlerini sağlamak için sabahtan akşama kadar çalışır, Keloğlan ise bütün gün tembellik edermiş. Bir gün annesi artık bu duruma dayanamamış ve oğluna: “Artık büyüdün oğlum. Git, biraz çalış da kendi ekmeğini kazan.” demiş.",
+      "Annesinin hazırladığı azığı alan Keloğlan yola koyulmuş. Bir tepenin yamacında koyunlarını otlatan bir çobana rastlamış. Biraz sohbet ettikten sonra ekmeğini çobana emanet etmiş ve üç gün içinde dönmezse ekmeğin ona helal olacağını söylemiş.",
+      "Üç gün sonra geri döndüğünde çobanın ekmeğini yediğini görmüş. Bunun üzerine koyunlardan birini alıp kaçmış. Yoluna devam ederken bir kervana rastlamış ve koyunu kervancıya emanet etmiş. Yine üç gün içinde dönmezse koyunun onlara kalacağını söylemiş. Döndüğünde koyunun yenildiğini öğrenince bu kez kervanın halılarını alıp uzaklaşmış.",
+      "Uzun bir yolculuğun ardından bir köye ulaşmış. Köyde büyük bir şenlik olduğunu görmüş. Meğer o gün köyün kabak şenliğiymiş. Keloğlan halılarını şenlik sahibine emanet etmiş. Üç gün sonra geri geldiğinde halıların da ortadan kaybolduğunu görünce öfkelenmiş. Etrafına bakınırken süslenmiş, gelin gibi hazırlanmış büyük bir kabağı fark etmiş. Onu da yanına alarak köyüne dönmüş.",
+      "Eve vardığında annesine: “Anne, sana bir gelin getirdim. Git de hoş geldin de.” demiş.",
+      "Annesi kapının arkasında duran gelini görmek için yaklaşmış. Ancak karşısında süslenmiş kocaman bir kabak görünce şaşkınlıktan ne yapacağını bilememiş. Oğlunun yine bir işe yaramadığını anlayınca elindeki kabağı Keloğlan'ın başına fırlatmış.",
+      "Kabak Keloğlan'ın başında parçalanmış. Annesi de oğluna tembelliğin ve düşüncesizliğin sonunun böyle olacağını anlatmış."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Tembellik ve düşüncesizlik insanı sonunda gülünç duruma düşürür."
+  },
+  {
+    "id": "horozun-emanet-yolculugu",
+    "baslik": "Horozun Emanet Yolculuğu",
+    "kategori": "Hayvan",
+    "tur": "Türk halk masalı",
+    "ozet": "Ayağındaki dikeni geri isteyen horoz, her emanetin karşılığında başka bir şey alarak dikenden kavala uzanan bir yolculuğa çıkar.",
+    "metin": [
+      "Uzak bir köyde kendi hâlinde yaşayan bir horoz varmış. Bir gün küllükte eşinirken ayağına diken batmış. Canı çok yanan horoz, dikenini çıkartması için yaşlı bir kadının evine gitmiş. Kadın horozun ayağındaki dikeni çıkarmış.",
+      "Horoz kadına teşekkür edip oradan ayrılmış. Aradan birkaç gün geçtikten sonra yeniden kadının kapısına gelmiş.",
+      "“Yaşlı nine, ayağımdan çıkardığın dikenimi geri almaya geldim.” demiş.",
+      "Kadın dikenin çoktan mangalda yandığını söylemiş. Horoz ise: “Öyleyse ya dikenimi verirsin ya da mangalını alırım.” diye karşılık vermiş.",
+      "Kadın başka çaresi olmadığını düşünerek mangalını horoza vermiş.",
+      "Horoz mangalı sırtına yükleyerek yola çıkmış. Bir süre sonra inek sağan başka bir kadının evine uğramış ve mangalını ona emanet etmiş. Döndüğünde mangalın bir inek tarafından kırıldığını öğrenmiş. Bunun üzerine horoz: “Mangalımı veremiyorsan ineğini alırım.” demiş.",
+      "Kadın da ineğini horoza vermek zorunda kalmış.",
+      "Horoz ineği de yanına alarak yolculuğuna devam etmiş. Bir süre sonra ineği başka bir eve emanet etmiş. Fakat geri geldiğinde ineğin kesildiğini öğrenmiş. Bu kez ev sahibinden gelinini istemiş. Adam önce itiraz etmiş ama horozun ısrarı karşısında ona altınlar teklif etmiş. Horoz altınları kabul etmeyince gelini yanına almış.",
+      "Yolda bir çobana rastlamış. Çobanın çaldığı kaval çok hoşuna gitmiş. Gelini kaval karşılığında çobana vermiş ve yoluna devam etmiş.",
+      "Sonunda kendi kümesine dönmüş. Tavukların karşısına geçerek başından geçenleri anlatmaya başlamış: “Dikenimi verdim mangal aldım, mangalı verdim inek aldım, ineği verdim gelin aldım, gelini verdim kaval aldım!”",
+      "Ardından kavalını çalmış. Horoz, tavuklar ve diğer hayvanlar günlerce eğlenmişler."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Küçük bir şey bile, peşinden gidildiğinde bambaşka yerlere varabilir."
+  },
+  {
+    "id": "kurnaz-kurt-ve-koyluler",
+    "baslik": "Kurnaz Kurt ve Köylüler",
+    "kategori": "Hayvan",
+    "tur": "Türk halk masalı",
+    "ozet": "Hayvanları avlayan kurnaz kurt, köylülerle bir anlaşma yapar; ama anlaşma bozulunca korkuyu kendi lehine kullanmaya çalışır.",
+    "metin": [
+      "Ulu dağların eteklerinde, bağları ve bahçeleriyle ünlü küçük bir köy varmış. Bu köyün yakınındaki dağlarda ise oldukça kurnaz ve açgözlü bir kurt yaşarmış.",
+      "Kurt, geceleri köye iner; koyunları, keçileri ve diğer hayvanları avlarmış. Köylüler her sabah eksilen hayvanlarını görünce çok üzülürmüş. Sonunda bu duruma bir son vermek için bir araya gelmişler.",
+      "Yedi gün yedi gece boyunca dağı aramışlar ve sonunda kurdu yakalayarak köy odasına getirmişler.",
+      "Köylüler kurda: “Hayvanlarımızı neden yiyorsun? Bizim de geçimimiz bunlara bağlı.” diye sormuşlar.",
+      "Kurt ise kendini savunarak: “Ben de yaşayan bir canlıyım. Sizin yiyeceğiniz ekmekse benimki de ettir. Bana her gün bir kilo et getirirseniz hayvanlarınıza dokunmam.” demiş.",
+      "Köylüler başka çareleri olmadığını düşünerek bu teklifi kabul etmişler. Kurda dağda bir yuva yapmışlar ve sırayla et götürmeye başlamışlar.",
+      "Ancak zaman geçtikçe köyün hayvanları azalmış, köylüler kurdu beslemekte zorlanmaya başlamış. Bir süre sonra et götürmeyi bırakmışlar.",
+      "Günlerce aç kalan kurt, sonunda yeniden köye inmeye karar vermiş. Önce otlayan bir eşeğe ve yavrusuna saldırmış. Eşeğin sahibi durumu öğrenince hemen köy odasına giderek diğer köylüleri toplamış.",
+      "Kurdu yeniden yakalayıp karşılarına çıkarmışlar.",
+      "“Bize söz vermiştin. Neden yine hayvanlarımızı yedin?” diye sormuşlar.",
+      "Kurt hiç korkmadan: “Bana et getirmezseniz, bulduğum her hayvanı yerim. Hatta gerekirse size de saldırırım.” demiş.",
+      "Köylüler bu sözleri duyunca korkmuşlar. Ancak kurt aslında onların kendisinden korktuğunu fark etmiş ve bu durumdan faydalanıyormuş. Köylülerin artık ona karşı koyamayacağını düşünmüş.",
+      "Bir süre sonra kurt köy odasından çıkmış ve kendisini yenilmez sanarak dağa doğru ilerlemiş. Fakat köylülerin bir daha kendisini aramayacağını anlayınca başka diyarlara gitmeye karar vermiş.",
+      "O günden sonra köyün hayvanlarına bir daha kurt saldırmamış. Köylüler de rahat bir nefes almış."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Korkuyla yapılan anlaşmalar uzun sürmez; birlik olan topluluk sonunda huzura kavuşur."
+  },
+  {
+    "id": "korkak-adamin-devlerle-macerasi",
+    "baslik": "Korkak Adamın Devlerle Macerası",
+    "kategori": "Dev",
+    "tur": "Türk halk masalı",
+    "ozet": "Gece tek başına dışarı çıkamayan korkak adam, kırk devin sarayına düşer ve yalanları, kurnazlığıyla onları alt eder.",
+    "metin": [
+      "Bir zamanlar öyle korkak bir adam yaşarmış ki gece tuvalete bile tek başına gidemezmiş. Her seferinde karısını yanına çağırırmış.",
+      "Bir gece karısı bu durumdan bıkmış ve adamı tuvalete götürüp kapıyı dışarıdan kilitlemiş. Adam ne kadar yalvarsa da karısı kapıyı açmamış. Çaresiz kalan adam, küçük bir pencereden dışarı çıkmayı başarmış.",
+      "Eve dönmeye korktuğu için uzaklara doğru yürümüş. Dağları, tepeleri aşmış ve sonunda büyük bir saraya ulaşmış. Sarayın içine girdiğinde kırk devin büyük kazanların etrafında oturduğunu görmüş.",
+      "Devler adamı görünce şaşkınlıkla sormuşlar: “Bizim karşımıza çıkan herkes korkup kaçar. Sen nasıl oluyor da hiç korkmadan buraya geldin?”",
+      "Adam hemen bir yalan uydurmuş: “Ben sizin dedenizim. Yıllardır sizi arıyorum. Yaşlandım ama sonunda torunlarıma kavuştum.” demiş.",
+      "Devler bu sözlere inanmış ve onu başköşeye oturtmuşlar.",
+      "Bir süre sonra devler bu yaşlı adamdan kurtulmak istemişler. Gece onu öldürmeye karar vermişler. Adam konuşmalarını duymuş ve yatağına büyük bir kütük yerleştirerek üzerine kendi başlığını koymuş. Kendisi de bir dolabın içine saklanmış.",
+      "Gece gelen devler karanlıkta kütüğü adam sanarak baltalarıyla parçalamışlar. Yorulup odalarına döndüklerinde adam saklandığı yerden çıkmış, sabah hiçbir şey olmamış gibi uyanmış.",
+      "Devler onu görünce şaşkına dönmüşler. Adam ise: “Gece pek rahat uyuyamadım. Üstelik pireler de beni çok rahatsız etti.” demiş.",
+      "Devler bu kez onu bir yarışla yenmeye karar vermişler. Kim yürürken daha çok toz çıkarırsa bir çuval altın kazanacakmış.",
+      "Adam bunu önceden duymuş ve çizmelerinin içine bolca toz doldurmuş. Yarış başladığında yürüdükçe çizmelerinden tozlar havaya savrulmuş. Devlerden bile daha fazla toz çıkarmış.",
+      "Bir sonraki yarışta ise taşları sıkarak un hâline getirmeleri gerekiyormuş. Adam cebine bir parça peynir saklamış. İki taşın arasına peyniri koyarak sıkmış ve peynirin suyunu akıtmış.",
+      "“Bakın evlatlarım, ben taşın suyunu bile çıkarırım.” demiş.",
+      "Devler bu gücü görünce ona hayran kalmışlar.",
+      "Sonunda devler adamdan kurtulmak için ona iki çuval altın vermiş ve evine kadar götürmeyi teklif etmişler. Adam da bu fırsatı kaçırmamış.",
+      "Devler onu evinin kapısına kadar taşımışlar. Karısı kapıyı açmadan önce kocasından kendisini tanımasını istemiş. Adam mendilini gösterince karısı onun gerçekten kocası olduğunu anlamış.",
+      "Adam altınları içeri taşımış ve karısına: “Beni o gece dışarıda bırakmasaydın, bu kadar altını bulamazdım.” demiş.",
+      "Böylece korkak adam, zekâsı sayesinde zengin olmuş."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Akıl, korkuyu da kuvveti de yenebilir."
+  },
+  {
+    "id": "sihirli-inek-ve-altin-ayakkabi",
+    "baslik": "Sihirli İnek ve Altın Ayakkabı",
+    "kategori": "Olağanüstü",
+    "tur": "Türk halk masalı",
+    "ozet": "Üvey annesinin kötü davrandığı küçük kıza konuşan bir inek yardım eder; düğünde düşürülen bir ayakkabı ise kaderini değiştirir.",
+    "metin": [
+      "Bir köyde annesiyle birlikte yaşayan küçük bir kız varmış. Annesi vefat edince babası başka bir kadınla evlenmiş. Ancak üvey annesi küçük kıza hiç iyi davranmazmış.",
+      "Her sabah ona bir parça arpa ekmeği verir, ineği otlatması için tarlaya gönderirmiş. Küçük kız hem aç kalır hem de bu duruma üzülürmüş.",
+      "Bir gün ineği dile gelerek kıza: “Üzülme yavrum. Ekmeğini bana ver, sen de kulağımdaki yiyeceklerden ye.” demiş.",
+      "Kız ineğin söylediğini yapmış. O günden sonra ineğin kulağından çıkan yiyeceklerle karnını doyurmuş. Gün geçtikçe daha sağlıklı ve güzel görünmeye başlamış.",
+      "Üvey annesi bu durumu fark etmiş. Kendi kızına ne kadar yemek yedirse de onun üvey kızı kadar güzelleşemediğini görmüş. Bir gün kendi kızını da ineği otlatmaya göndermiş. Ancak inek ona hiçbir yardımda bulunmamış.",
+      "Üvey anne bu sırrı öğrenmek için ineği kesmeye karar vermiş. Küçük kız bunu duyunca çok üzülmüş ve ineğin yanına giderek ağlamış.",
+      "İnek ona: “Beni kestiklerinde kemiklerimi beyaz bir bezin içine sarıp yemliğin altına sakla. Sana bir gün mutlaka yardım edecekler.” demiş.",
+      "İnek kesildikten sonra eti üvey anneye ve kızına acı gelmiş, küçük kız ise eti rahatlıkla yemiş. Kemiklerini de ineğin söylediği gibi saklamış.",
+      "Aradan aylar geçmiş. Bir gün padişahın oğlunun düğünü için köye davet gelmiş. Üvey anne kendi kızını hazırlamış, üvey kızına ise gitmeden önce imkânsız işler vermiş. Bir kazanı gözyaşıyla doldurmasını ve bir teneke buğdayla mercimeği ayırmasını istemiş.",
+      "Kız çaresizce ağlamaya başlamış. Yoldan geçen yaşlı bir tuzcu ona: “Biraz tuzu suyla karıştırırsan gözyaşı gibi tuzlu olur. Böylece kazanını doldurabilirsin.” demiş.",
+      "Ardından yoldan geçen birkaç yolcu da buğdayla mercimeği ayırmasına yardım etmiş.",
+      "İşlerini bitiren kız, ineğin kemiklerini sakladığı yere gitmiş. Bir de ne görsün! Orada altın işlemeli elbiseler, güzel atlar ve birbirinden değerli eşyalar varmış.",
+      "Kız en güzel elbiseyi giymiş, ata binerek düğüne gitmiş. Güzelliğiyle herkesin dikkatini çekmiş. Ancak üvey annesi ve üvey kardeşi onu tanıyamamış.",
+      "Düğünden erken ayrılırken aceleyle ayakkabısının birini çeşmenin yanında düşürmüş.",
+      "Ertesi gün padişahın oğlu çeşmede bulduğu ayakkabının sahibini aramaya başlamış. Ayakkabıyı köydeki bütün genç kızlara denetmiş. Sonunda küçük kızın ayağına tam olmuş.",
+      "Padişahın oğlu kızı bulduğuna çok sevinmiş ve onunla evlenmiş. Küçük kız da yıllarca çektiği sıkıntıların ardından huzurlu ve mutlu bir hayata kavuşmuş."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "İyilik ve sabır karşılıksız kalmaz."
+  },
+  {
+    "id": "bir-vurusta-altmis-aslan",
+    "baslik": "Bir Vuruşta Altmış Aslan",
+    "kategori": "Dev",
+    "tur": "Türk halk masalı",
+    "ozet": "Bir hamlede altmış sinek öldüren Ali, kılıcına yazdırdığı unvan sayesinde devlerin lideri olur ve onları kurnazlıkla yönetir.",
+    "metin": [
+      "Ali adında küçük bir çocuk varmış. Her gün öküzlerini otlatmak için meraya gidermiş. Ancak ormanda yaşayan kurnaz bir tilki sürekli Ali'nin yiyeceklerini çalarmış.",
+      "Ali ne kadar uğraşsa da tilkiyi yakalayamazmış.",
+      "Bir gün Ali yemek yerken ekmeğinin üzerine pekmez dökülmüş. Pekmezin üzerine bir sürü sinek konmuş. Ali bir hamlede elini sallamış ve altmış sineği birden öldürmüş.",
+      "Buna çok sevinen Ali: “Bir vuruşta altmışını birden yendim! Ben ne kadar güçlüymüşüm!” diye bağırmış.",
+      "Kendisine bir kahramanlık unvanı vermeye karar vermiş. Köydeki demirciye giderek üzerine “Bir vuruşta altmış aslan öldüren kahraman” yazılı bir kılıç yaptırmış.",
+      "Kılıcını beline takıp uzak diyarlara doğru yola çıkmış. Akşam olunca bir ormanda uykuya dalmış. O sırada ormandan geçen devler, kılıcın üzerindeki yazıyı okumuşlar. Ali'nin çok güçlü bir savaşçı olduğunu düşünerek ondan korkmuşlar.",
+      "Onu uyandırıp kendilerine zarar vermemesini rica etmişler. Ali de onlara dokunmayacağını söylemiş. Devler onun gücüne hayran kalıp kendilerine lider seçmişler.",
+      "Bir gün devler Ali'ye kış için ormandan ağaç getirme görevini vermişler. Ali ise: “Bana uzun ve sağlam bir ip getirin. Tek seferde bütün ormanı söküp getireyim.” demiş.",
+      "Devler ormanın yok olacağından korkup bu fikirden vazgeçmişler.",
+      "Başka bir gün güçlerini denemek için büyük taşları sıkıştırmaya başlamışlar. Ali ise cebinden bir yumurta çıkarıp avucunda ezmiş.",
+      "“Ben taşlarla uğraşmam. Bir sıkışta yumurtanın suyunu bile çıkarırım.” demiş.",
+      "Devler onun karşısında kendilerini güçsüz hissetmişler.",
+      "Günler geçtikçe Ali'nin canı sıkılmış ve köyüne dönmeye karar vermiş. Yanına topal bir dev alarak yola çıkmış. Yolda eskiden yiyeceklerini çalan tilkiye rastlamış.",
+      "Tilki, Ali'nin bir devin sırtında geldiğini görünce kahkahalarla gülmeye başlamış: “Sen hâlâ aynı beceriksiz Ali'sin!” diye bağırmış.",
+      "Ali bu sözlere çok öfkelenmiş ve tilkiyi kılıcıyla korkutup oradan uzaklaştırmış. Ardından topal deve köye doğru ilerlemesini söylemiş.",
+      "Köyüne vardığında evinin damına çıkmış ve: “Baba, uzun kılıcını getir! Şu topal devle hesaplaşacağım!” diye bağırmış.",
+      "Dev bunu duyunca Ali'nin kendisini de yenebileceğini düşünerek korkuyla kaçmaya başlamış. Kaçarken bir dereye düşmüş ve gözden kaybolmuş.",
+      "Ali ailesine kavuşmuş ve başından geçenleri anlatmış."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Akıl ve özgüven, en büyük gücün yerini tutabilir."
+  },
+  {
+    "id": "yeralti-sarayindaki-prenses",
+    "baslik": "Yeraltı Sarayındaki Prenses",
+    "kategori": "Olağanüstü",
+    "tur": "Türk halk masalı",
+    "ozet": "Yıllarca yerin altındaki bir sarayda yaşayan prenses, kırılan bir pencereden sızan ışıkla dış dünyayı keşfeder ve sevdiğinin peşine düşer.",
+    "metin": [
+      "Uzak bir ülkede yaşayan padişah ve sultanın en büyük dileği bir çocuk sahibi olmakmış. Bir gün uzun bir yolculuğa çıkan padişah, karşısına çıkan ak sakallı bir ihtiyardan yardım istemiş.",
+      "İhtiyar cebinden bir elma çıkararak: “Bu elmanın yarısını sen, diğer yarısını da sultan yiyecek. Dokuz ay sonra dileğiniz gerçekleşecek.” demiş.",
+      "Padişah söyleneni yapmış. Gerçekten de dokuz ay sonra güzel bir kız çocukları olmuş.",
+      "Kız büyüdükçe güzelliği herkesin dikkatini çekmiş. Padişahın vezirleri, kızın ileride başlarına dert açabileceğini söyleyince padişah yerin altında gizli bir saray yaptırmış. Küçük prensesi dadısıyla birlikte bu saraya yerleştirmiş. Dışarıdan hiçbir ışığın girmediği bu yerde kız, yıllarca dış dünyadan habersiz yaşamış.",
+      "On beş yaşına geldiğinde bir gün yemek yerken elindeki kemiği pencereden dışarı fırlatmış. Kemik cama çarparak pencereyi kırmış ve içeriye güneş ışığı dolmuş.",
+      "Prenses daha önce hiç görmediği bu ışığa hayran kalmış. O gece uyuyamamış ve dışarıdaki dünyayı merak etmeye başlamış.",
+      "Ertesi gece dadısı uyurken gizlice saraydan çıkmış. Bir süre yürüdükten sonra ışıklarla süslenmiş büyük çadırlar görmüş. En gösterişli çadırın içine girdiğinde güzel bir delikanlının uyuduğunu fark etmiş.",
+      "Prenses merakına yenik düşerek çadırdaki eşyaların yerlerini değiştirmiş, yemeklerden yemiş ve suyundan içmiş. Sonra da saraya geri dönmüş.",
+      "Sabah uyandığında eşyalarının değiştiğini gören delikanlı çok şaşırmış. Ertesi gece uyumamak için başının üzerine buz dolu bir torba asmış. Buz eridikçe üzerine damlayan soğuk su onu uyanık tutacakmış.",
+      "Prenses yine çadıra gelmiş. Tam çıkacağı sırada delikanlı onu yakalamış ve kim olduğunu sormuş.",
+      "Prenses: “Ben yalnızca Allah'ın bir kuluyum.” diye cevap vermiş.",
+      "O gece birlikte vakit geçirmişler. Ancak sabah olduğunda çadırlar toplanmış ve delikanlı arkadaşlarıyla birlikte ülkesine dönmüş. Prenses ise onu bulamayınca çok üzülmüş.",
+      "Bir çobana rastlamış ve üzerindeki değerli eşyaları vererek eski kıyafetlerini istemiş. Koyun derisini başına geçirip kendisini bir erkek gibi göstermiş ve delikanlının peşinden yola çıkmış.",
+      "Delikanlıya ulaştığında ona adının Abdal olduğunu söylemiş. Nereden geldiğini sorunca da Şehvaneli'nden geldiğini anlatmış.",
+      "Delikanlı, orada ne gördüğünü sorunca Abdal şöyle cevap vermiş: “İncili çadır kurulu gördüm, tül gömlek dürülü gördüm, gümüş şamdanı döner gördüm. İçinde bir güzel, ah edip ağlar gördüm.”",
+      "Delikanlı bu sözleri duyunca karşısındaki kişinin çadırına gelen genç kız olduğunu anlamış.",
+      "Böylece birbirlerine kavuşmuşlar. Prensesin gizemli yolculuğu, büyük bir sevgiyle son bulmuş."
+    ],
+    "kapanis": "Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Merak ve cesaret, insanı karanlıktan aydınlığa çıkarır."
+  },
+  {
+    "id": "tembel-oglan-ve-sihirli-havlu",
+    "baslik": "Tembel Oğlan ve Sihirli Havlu",
+    "kategori": "Olağanüstü",
+    "tur": "Türk halk masalı",
+    "ozet": "Yatağından kalkmaya üşenen oğlan, saraydan kovulan bir kızın sayesinde çalışmayı öğrenir; bir kuyunun dibinde bulduğu nar ve havlu ise hayatını değiştirir.",
+    "metin": [
+      "Yaşlı bir kadınla birlikte yaşayan çok tembel bir oğlan varmış. O kadar tembelmiş ki yatağından kalkmaya bile üşenir, bütün işlerini annesine yaptırırmış.",
+      "Bir gün ülkenin kralı, uğursuz saydığı kızını saraydan kovmuş. Gidecek yeri olmayan kız, uzun bir yolculuktan sonra küçük bir kulübeye ulaşmış. İçeri girdiğinde yatakta tembel tembel uzanan oğlanı görmüş.",
+      "Oğlan hemen kızdan yemek istemiş. Kız ise ona: “Önce kendin kalkıp işlerini yapmayı öğrenmelisin.” diyerek çıkışmış.",
+      "Oğlan bu davranışa şaşırmış ve kıza Azrail adını takmış. Kızın sert ama öğretici tavırları sayesinde zamanla tembelliğini bırakmış. Çalışmaya, kendi yemeğini hazırlamaya ve sorumluluklarını yerine getirmeye başlamış.",
+      "Bir süre sonra annesi onu devecilerin yanına çalışmaya göndermiş. Oğlan kazandığı bütün parayı kıza veriyor, böylece birlikte geçiniyorlarmış.",
+      "Bir gün devecilerle birlikte uzak bir yolculuğa çıkmış. Yolculuk sırasında karşılarına yaşlı bir adam çıkmış ve onlara bazı öğütler vermiş. Oğlan bu öğütleri dikkate almış.",
+      "Bir süre sonra yolcular susuz kalmışlar. Karşılarına eski bir kuyu çıkmış ancak kuyudan su gelmiyormuş. Oğlana kuyuya inip suyun önünü açması söylenmiş.",
+      "Oğlan korkmadan kuyuya inmiş. Kuyunun dibinde uzun sakallı yaşlı bir adamla karşılaşmış. Yaşlı adam ona bir nar ve sihirli bir havlu vermiş. Oğlan bunları saklayarak kuyudan çıkmış. Ardından kuyudan yeniden su akmaya başlamış.",
+      "Oğlan yol arkadaşlarından gizlice ayrılarak eve dönmüş ve narla havluyu kıza vermiş.",
+      "Kız narı açtığında içinden sayısız elmas çıkmış. Havluyu açtığında ise içinden askerler, müzisyenler ve hizmetkârlar çıkmaya başlamış.",
+      "Bu sihirli eşyalar sayesinde kız büyük bir saray yaptırmış ve sarayı güzelliklerle donatmış.",
+      "Yolculuktan dönen oğlan kulübesini boş bulmuş. Ne olduğunu anlamaya çalışırken bir grup asker onu yakalayarak büyük saraya götürmüş.",
+      "Orada güzel kıyafetler giydirilmiş ve kızla karşı karşıya getirilmiş. Kız onu büyük bir sevinçle karşılamış. Ardından sihirli havluyu açarak askerleri ve müzisyenleri çağırmış. Sarayda büyük bir kutlama yapılmış.",
+      "Tembel oğlan ile kralın kızı evlenmiş. Oğlan zamanla çalışkanlığı ve cesareti sayesinde ülkenin hükümdarı olmuş."
+    ],
+    "kapanis": "Ben de onların düğününe bir tepsi baklava götürmek istemiştim. Ancak yolda bir kurbağa vak vak diye ötmeye başlayınca bunu bir işaret sanıp baklavayı yere bıraktım. Böylece düğüne eli boş gitmiş oldum. Onlar ermiş muradına, biz çıkalım kerevetine.",
+    "ders": "Emek veren ve öğüt dinleyen, sonunda muradına erer."
+  }
+];
+
+/* ---------- 2. SAYFADAKİ ÖĞELER ---------- */
+const $ = (id) => document.getElementById(id);
+const el = {
+  ilerleme: $("ilerleme"),
+  listeEkrani: $("liste-ekrani"),
+  okumaEkrani: $("okuma-ekrani"),
+  arama: $("arama"),
+  kategoriler: $("kategoriler"),
+  liste: $("masal-listesi"),
+  sonucSayisi: $("sonuc-sayisi"),
+  bosSonuc: $("bos-sonuc"),
+  temizle: $("temizle"),
+  rastgele: $("rastgele"),
+  devamKutusu: $("devam-kutusu"),
+  devamBaslik: $("devam-baslik"),
+  devamOran: $("devam-oran"),
+  devamBaglanti: $("devam-baglanti"),
+  okumaTur: $("okuma-tur"),
+  okumaBaslik: $("okuma-baslik"),
+  okumaBilgi: $("okuma-bilgi"),
+  okumaAcilis: $("okuma-acilis"),
+  okumaMetin: $("okuma-metin"),
+  okumaKapanis: $("okuma-kapanis"),
+  okumaDers: $("okuma-ders"),
+  onceki: $("onceki"),
+  sonraki: $("sonraki"),
+  kucult: $("kucult"),
+  buyut: $("buyut"),
+  satir: $("satir"),
+  temaDugmeleri: document.querySelectorAll(".tema-dugme")
+};
+const SAYFA_BASLIGI = document.title;
+
+/* ---------- 3. TARAYICI HAFIZASI ----------
+   localStorage, sayfa kapansa da küçük bilgileri tarayıcıda saklar.
+   Bazı tarayıcılarda kapalı olabileceği için try/catch içinde kullanılır. */
+function hafizadanOku(anahtar, varsayilan) {
+  try {
+    const deger = localStorage.getItem(anahtar);
+    return deger === null ? varsayilan : JSON.parse(deger);
+  } catch (hata) {
+    return varsayilan;
+  }
+}
+function hafizayaYaz(anahtar, deger) {
+  try { localStorage.setItem(anahtar, JSON.stringify(deger)); } catch (hata) { /* hafıza kullanılamıyorsa sessizce geç */ }
+}
+
+const ayarlar = Object.assign({ boyut: 2, genisSatir: false, tema: null }, hafizadanOku("masal-ayarlar", {}));
+const konumlar = hafizadanOku("masal-konumlar", {});     // her masalda ne kadar okunduğu (0 ile 1 arası)
+const okunanlar = hafizadanOku("masal-okunanlar", []);   // sonuna kadar okunan masalların listesi
+
+/* Uygulamanın o anki durumu */
+const durum = { arama: "", kategori: "Tümü" };
+let acikMasal = null;
+
+/* ---------- 4. YARDIMCI FONKSİYONLAR ---------- */
+
+/* Türkçe harfleri sadeleştirir: "Keloğlan" ile "keloglan" aynı sonucu verir.
+   Her harf tek harfe dönüştüğü için metnin uzunluğu değişmez; bu sayede vurgulama doğru yere denk gelir. */
+const HARF_ESLESME = {
+  "ç": "c", "Ç": "c", "ğ": "g", "Ğ": "g", "ı": "i", "I": "i", "İ": "i",
+  "ö": "o", "Ö": "o", "ş": "s", "Ş": "s", "ü": "u", "Ü": "u",
+  "â": "a", "Â": "a", "î": "i", "Î": "i", "û": "u", "Û": "u", "’": "'"
+};
+function sadelestir(metin) {
+  let sonuc = "";
+  for (let i = 0; i < metin.length; i++) {
+    const harf = metin[i];
+    const kucuk = harf.toLowerCase();
+    sonuc += HARF_ESLESME[harf] || (kucuk.length === 1 ? kucuk : harf);
+  }
+  return sonuc;
+}
+
+/* Metni HTML içine güvenle koymak için özel karakterleri dönüştürür */
+function htmlKacir(metin) {
+  const tablo = { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" };
+  return metin.replace(/[&<>"']/g, (k) => tablo[k]);
+}
+
+/* Aranan kelimeyi metinde <mark> ile işaretler */
+function vurgula(metin, aranan) {
+  if (!aranan) return htmlKacir(metin);
+  const sade = sadelestir(metin);
+  let sonuc = "";
+  let baslangic = 0;
+  let konum = sade.indexOf(aranan);
+  while (konum !== -1) {
+    sonuc += htmlKacir(metin.slice(baslangic, konum));
+    sonuc += "<mark>" + htmlKacir(metin.slice(konum, konum + aranan.length)) + "</mark>";
+    baslangic = konum + aranan.length;
+    konum = sade.indexOf(aranan, baslangic);
+  }
+  return sonuc + htmlKacir(metin.slice(baslangic));
+}
+
+/* Kelime sayısından tahmini okuma süresi (dakikada yaklaşık 170 kelime) */
+function okumaSuresi(masal) {
+  const kelime = masal.metin.join(" ").split(/\s+/).length;
+  return Math.max(1, Math.round(kelime / 170));
+}
+
+/* Arama yalnızca masalın metninde geçiyorsa, geçtiği yerden kısa bir parça gösterir */
+function metindenParca(masal, aranan) {
+  const tumMetin = masal.metin.join(" ");
+  const konum = sadelestir(tumMetin).indexOf(aranan);
+  if (konum === -1) return "";
+  const bas = Math.max(0, konum - 45);
+  const son = Math.min(tumMetin.length, konum + aranan.length + 55);
+  return (bas > 0 ? "..." : "") + tumMetin.slice(bas, son) + (son < tumMetin.length ? "..." : "");
+}
+
+/* Arama hızlı olsun diye her masalın sadeleştirilmiş hâli baştan bir kez hazırlanır */
+MASALLAR.forEach((masal, sira) => {
+  masal.sira = sira + 1;
+  masal.aramaOzet = sadelestir(masal.baslik + " " + masal.kategori + " " + masal.ozet);
+  masal.aramaMetin = sadelestir(masal.metin.join(" "));
+});
+
+/* ---------- 5. LİSTE EKRANI ---------- */
+
+/* Tür düğmelerini masal verisinden otomatik üretir */
+function kategorileriCiz() {
+  const turler = ["Tümü", ...new Set(MASALLAR.map((m) => m.kategori))];
+  el.kategoriler.innerHTML = turler.map((tur) => {
+    const sayi = tur === "Tümü" ? MASALLAR.length : MASALLAR.filter((m) => m.kategori === tur).length;
+    return `<button type="button" class="etiket-dugme" data-kategori="${tur}" aria-pressed="${tur === durum.kategori}">${tur}<span class="sayi">${sayi}</span></button>`;
+  }).join("");
+}
+
+/* Seçili türe ve arama kelimesine uyan masalları döndürür */
+function suzulmusMasallar() {
+  return MASALLAR.filter((m) => {
+    const turUyuyor = durum.kategori === "Tümü" || m.kategori === durum.kategori;
+    const aramaUyuyor = !durum.arama || m.aramaOzet.includes(durum.arama) || m.aramaMetin.includes(durum.arama);
+    return turUyuyor && aramaUyuyor;
+  });
+}
+
+/* Tek bir masal kartının HTML'i */
+function kartHTML(m) {
+  const a = durum.arama;
+  const yalnizMetindeGeciyor = a && !m.aramaOzet.includes(a);
+  const parca = yalnizMetindeGeciyor ? `<p class="parca">${vurgula(metindenParca(m, a), a)}</p>` : "";
+  const oran = konumlar[m.id] || 0;
+  let etiket = "";
+  if (okunanlar.includes(m.id)) etiket = `<span class="durum-etiketi">Okundu</span>`;
+  else if (oran > 0.03) etiket = `<span class="durum-etiketi">%${Math.round(oran * 100)}</span>`;
+
+  return `
+    <li>
+      <a class="kart" href="#/masal/${m.id}" data-id="${m.id}">
+        <div class="zikzak" aria-hidden="true"></div>
+        <div class="kart-govde">
+          <div class="kart-ust">
+            <div class="rozet" aria-hidden="true"><svg><use href="#goz"/></svg><span>${m.sira}</span></div>
+            <span class="kart-tur">${htmlKacir(m.kategori)} · ${htmlKacir(m.tur)}</span>
+          </div>
+          <h3>${vurgula(m.baslik, a)}</h3>
+          <p class="ozet">${vurgula(m.ozet, a)}</p>
+          ${parca}
+          <div class="kart-alt">
+            <span>${okumaSuresi(m)} dk okuma${etiket}</span>
+            <span class="oku">Oku</span>
+          </div>
+        </div>
+      </a>
+    </li>`;
+}
+
+/* Listeyi baştan çizer ve sonuç sayısını yazar */
+function listeyiCiz() {
+  const sonuclar = suzulmusMasallar();
+  el.liste.innerHTML = sonuclar.map(kartHTML).join("");
+  el.bosSonuc.hidden = sonuclar.length > 0;
+  el.sonucSayisi.textContent = sonuclar.length === MASALLAR.length
+    ? `${MASALLAR.length} masalın hepsi gösteriliyor.`
+    : `${MASALLAR.length} masaldan ${sonuclar.length} tanesi gösteriliyor.`;
+}
+
+/* "Kaldığın yerden devam et" kutusunu günceller */
+function devamKutusunuGuncelle() {
+  const sonId = hafizadanOku("masal-son", null);
+  const masal = MASALLAR.find((m) => m.id === sonId);
+  const oran = masal ? (konumlar[masal.id] || 0) : 0;
+  if (!masal || oran < 0.03 || oran > 0.9 || okunanlar.includes(masal.id)) {
+    el.devamKutusu.hidden = true;
+    return;
+  }
+  el.devamBaslik.textContent = masal.baslik;
+  el.devamOran.textContent = "%" + Math.round(oran * 100);
+  el.devamBaglanti.href = "#/masal/" + masal.id;
+  el.devamKutusu.hidden = false;
+}
+
+/* Liste ekranını gösterir; okumadan dönülüyorsa o masalın kartına odaklanır */
+function listeyiGoster() {
+  const kapananMasal = acikMasal;
+  acikMasal = null;
+  el.okumaEkrani.hidden = true;
+  el.listeEkrani.hidden = false;
+  el.ilerleme.style.transform = "scaleX(0)";
+  document.title = SAYFA_BASLIGI;
+  devamKutusunuGuncelle();
+  listeyiCiz();
+  if (kapananMasal) {
+    const kart = el.liste.querySelector(`[data-id="${kapananMasal.id}"]`);
+    if (kart) {
+      kart.scrollIntoView({ block: "center" });
+      kart.focus({ preventScroll: true });
+    }
+  }
+}
+
+/* Olay dinleyicileri: tür düğmeleri, arama kutusu, temizle ve rastgele */
+el.kategoriler.addEventListener("click", (olay) => {
+  const dugme = olay.target.closest("button[data-kategori]");
+  if (!dugme) return;
+  durum.kategori = dugme.dataset.kategori;
+  el.kategoriler.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b === dugme));
+  listeyiCiz();
+});
+
+el.arama.addEventListener("input", () => {
+  durum.arama = sadelestir(el.arama.value.trim());
+  listeyiCiz();
+});
+
+el.temizle.addEventListener("click", () => {
+  el.arama.value = "";
+  durum.arama = "";
+  durum.kategori = "Tümü";
+  kategorileriCiz();
+  listeyiCiz();
+  el.arama.focus();
+});
+
+el.rastgele.addEventListener("click", () => {
+  const adaylar = suzulmusMasallar().length ? suzulmusMasallar() : MASALLAR;
+  const secilen = adaylar[Math.floor(Math.random() * adaylar.length)];
+  git("#/masal/" + secilen.id);
+});
+
+/* ---------- 6. OKUMA EKRANI ---------- */
+
+/* Önceki / sonraki bağlantısını ayarlar; masal yoksa bağlantıyı gizler */
+function baglantiAyarla(baglanti, masal) {
+  baglanti.hidden = !masal;
+  if (!masal) return;
+  baglanti.href = "#/masal/" + masal.id;
+  baglanti.querySelector("strong").textContent = masal.baslik;
+}
+
+function masaliGoster(masal) {
+  const kayitliOran = konumlar[masal.id] || 0;   // ekran değişmeden önce okunur
+  acikMasal = masal;
+
+  el.listeEkrani.hidden = true;
+  el.okumaEkrani.hidden = false;
+
+  el.okumaTur.textContent = masal.kategori + " · " + masal.tur;
+  el.okumaBaslik.textContent = masal.baslik;
+  el.okumaBilgi.textContent = `${masal.sira}. masal · yaklaşık ${okumaSuresi(masal)} dakikalık okuma`;
+  el.okumaAcilis.textContent = masal.acilis || VARSAYILAN_ACILIS;
+  el.okumaKapanis.textContent = masal.kapanis || VARSAYILAN_KAPANIS;
+  el.okumaDers.textContent = masal.ders;
+
+  /* Paragraflar textContent ile eklenir; böylece metin HTML olarak yorumlanmaz */
+  el.okumaMetin.replaceChildren(...masal.metin.map((paragraf) => {
+    const p = document.createElement("p");
+    p.textContent = paragraf;
+    return p;
+  }));
+
+  const sira = MASALLAR.indexOf(masal);
+  baglantiAyarla(el.onceki, MASALLAR[sira - 1]);
+  baglantiAyarla(el.sonraki, MASALLAR[sira + 1]);
+
+  document.title = masal.baslik + " | Bir Varmış Bir Yokmuş";
+  hafizayaYaz("masal-son", masal.id);
+
+  /* Yarıda bırakılmış bir masalsa kaldığı yere kaydır, değilse en üstten başlat */
+  requestAnimationFrame(() => {
+    const hedef = (kayitliOran > 0.03 && kayitliOran < 0.9) ? kayitliOran * kaydirilabilirYukseklik() : 0;
+    window.scrollTo(0, hedef);
+    ilerlemeyiGuncelle();
+    el.okumaBaslik.focus({ preventScroll: true });
+  });
+}
+
+/* ---------- 7. OKUMA İLERLEMESİ VE KALDIĞIN YER ---------- */
+let kayitZamanlayici = null;
+
+function kaydirilabilirYukseklik() {
+  return document.documentElement.scrollHeight - window.innerHeight;
+}
+
+function ilerlemeyiGuncelle() {
+  if (!acikMasal) return;
+  const yukseklik = kaydirilabilirYukseklik();
+  const oran = yukseklik > 0 ? Math.min(1, window.scrollY / yukseklik) : 1;
+  el.ilerleme.style.transform = `scaleX(${oran})`;
+
+  konumlar[acikMasal.id] = oran;
+  if (oran > 0.92 && !okunanlar.includes(acikMasal.id)) okunanlar.push(acikMasal.id);
+
+  /* Her kaydırmada değil, kaydırma durduktan kısa süre sonra hafızaya yazılır */
+  clearTimeout(kayitZamanlayici);
+  kayitZamanlayici = setTimeout(() => {
+    hafizayaYaz("masal-konumlar", konumlar);
+    hafizayaYaz("masal-okunanlar", okunanlar);
+  }, 300);
+}
+window.addEventListener("scroll", ilerlemeyiGuncelle, { passive: true });
+
+/* ---------- 8. OKUMA AYARLARI ---------- */
+const YAZI_BOYUTLARI = [0.95, 1.05, 1.15, 1.3, 1.45, 1.6];   // rem cinsinden
+
+/* İlk açılışta tema seçilmemişse işletim sisteminin karanlık mod ayarına bakılır */
+if (!ayarlar.tema) {
+  ayarlar.tema = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "gece" : "gunduz";
+}
+
+function ayarlariUygula() {
+  const kok = document.documentElement;
+  kok.style.setProperty("--okuma-boyutu", YAZI_BOYUTLARI[ayarlar.boyut] + "rem");
+  kok.style.setProperty("--satir-araligi", ayarlar.genisSatir ? "2.05" : "1.75");
+  kok.dataset.tema = ayarlar.tema;
+
+  el.kucult.disabled = ayarlar.boyut === 0;
+  el.buyut.disabled = ayarlar.boyut === YAZI_BOYUTLARI.length - 1;
+  el.satir.setAttribute("aria-pressed", ayarlar.genisSatir);
+  el.temaDugmeleri.forEach((d) => d.setAttribute("aria-pressed", ayarlar.tema === "gece"));
+
+  hafizayaYaz("masal-ayarlar", ayarlar);
+}
+
+el.kucult.addEventListener("click", () => { ayarlar.boyut = Math.max(0, ayarlar.boyut - 1); ayarlariUygula(); });
+el.buyut.addEventListener("click", () => { ayarlar.boyut = Math.min(YAZI_BOYUTLARI.length - 1, ayarlar.boyut + 1); ayarlariUygula(); });
+el.satir.addEventListener("click", () => { ayarlar.genisSatir = !ayarlar.genisSatir; ayarlariUygula(); });
+el.temaDugmeleri.forEach((d) => d.addEventListener("click", () => {
+  ayarlar.tema = ayarlar.tema === "gece" ? "gunduz" : "gece";
+  ayarlariUygula();
+}));
+
+/* ---------- 9. SAYFA YÖNLENDİRME ----------
+   Adres "#/masal/keloglan-ile-dev" ise o masal açılır, "#/" ise liste gösterilir.
+   Böylece tarayıcının geri düğmesi de çalışır ve sayfa tek dosyada kalır. */
+function adresiIsle(adres) {
+  if (adres && !adres.startsWith("#/")) return;   // "#icerik" gibi sayfa içi bağlantılar ekranı değiştirmez
+  const eslesme = adres.match(/^#\/masal\/([a-z0-9-]+)$/);
+  const masal = eslesme && MASALLAR.find((m) => m.id === eslesme[1]);
+  if (masal) masaliGoster(masal);
+  else listeyiGoster();
+}
+
+/* Bir ekrana gitmek için tek fonksiyon: önce ekranı doğrudan değiştirir, sonra adres çubuğunu
+   günceller. Sayfa bir önizleme penceresinde ya da adres değiştirmeye izin vermeyen bir ortamda
+   açılsa bile masallar açılmaya devam eder. */
+function git(adres) {
+  try {
+    if (location.hash !== adres) history.pushState(null, "", adres);
+  } catch (hata) { /* adres güncellenemiyorsa yalnızca ekranı değiştir */ }
+  adresiIsle(adres);
+}
+
+function yonlendir() { adresiIsle(location.hash); }
+window.addEventListener("popstate", yonlendir);     // tarayıcının geri / ileri düğmeleri
+window.addEventListener("hashchange", yonlendir);
+
+/* Sayfadaki bütün "#/..." bağlantıları (masal kartları, Oku, Tüm masallar, önceki / sonraki,
+   kaldığın yerden devam et) tek bir dinleyiciyle yakalanır ve git() ile açılır. */
+document.addEventListener("click", (olay) => {
+  const baglanti = olay.target.closest('a[href^="#/"]');
+  if (!baglanti || olay.ctrlKey || olay.metaKey || olay.shiftKey) return;
+  olay.preventDefault();
+  git(baglanti.getAttribute("href"));
+});
+
+/* ---------- 10. KLAVYE KISAYOLLARI VE BAŞLATMA ---------- */
+document.addEventListener("keydown", (olay) => {
+  const yaziyor = /^(INPUT|TEXTAREA|SELECT)$/.test(olay.target.tagName);
+  if (olay.altKey || olay.ctrlKey || olay.metaKey) return;
+
+  if (olay.key === "/" && !yaziyor && !acikMasal) {   // "/" ile arama kutusuna geç
+    olay.preventDefault();
+    el.arama.focus();
+    return;
+  }
+  if (!acikMasal || yaziyor) return;
+
+  if (olay.key === "Escape") git("#/");
+  if (olay.key === "ArrowLeft" && !el.onceki.hidden) git(el.onceki.getAttribute("href"));
+  if (olay.key === "ArrowRight" && !el.sonraki.hidden) git(el.sonraki.getAttribute("href"));
+});
+
+ayarlariUygula();
+kategorileriCiz();
+yonlendir();
+</script>
+</body>
+</html>
