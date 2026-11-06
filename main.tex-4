@@ -1,0 +1,431 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage{fontspec}
+\fi
+
+\usepackage[turkish]{babel}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{amssymb}
+
+\definecolor{ana}{HTML}{14325C}
+\definecolor{vurgu}{HTML}{CF4B32}
+\definecolor{acik}{HTML}{EEF2F8}
+
+\hypersetup{colorlinks=true, linkcolor=ana, urlcolor=ana, citecolor=ana}
+\setlist{itemsep=2pt, topsep=4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\onehalfspacing
+
+\newcommand{\kutu}{$\square$}
+\newcommand{\isaret}{$\boxtimes$}
+
+\renewcommand{\arraystretch}{1.3}
+\newcommand{\baslik}[1]{\textcolor{white}{\textbf{#1}}}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{acik},
+  frame=single,
+  rulecolor=\color{ana},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  captionpos=t,
+  aboveskip=8pt,
+  belowskip=8pt
+}
+\renewcommand{\lstlistingname}{Listing}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{gray}{\small Bir Varmış Bir Yokmuş}}
+\fancyhead[R]{\textcolor{gray}{\small Azra Hoşgör (86230024) -- Vize Raporu}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{15pt}
+
+\newcommand{\gorsel}[1]{%
+  \IfFileExists{#1.png}{\includegraphics[width=\linewidth]{#1.png}}{%
+    \IfFileExists{#1.jpg}{\includegraphics[width=\linewidth]{#1.jpg}}{%
+      \fcolorbox{gray}{white}{\parbox[c][2.4cm][c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+        \centering\color{gray}\small Ekran görüntüsü / görsel ekleyin\\[2pt]\texttt{#1.png}}}}}%
+  \IfFileExists{#1b.png}{\par\vspace{3pt}\includegraphics[width=\linewidth]{#1b.png}}{}%
+}
+\newcommand{\hafta}[6]{%
+  \textbf{#1. hafta}\newline #2 &
+  #3\newline \textbf{Commit:} #4\newline
+  {\small #5 Ders içinde katılım sergiledim}\newline
+  {\small #6 Telafi yaptım} &
+  \gorsel{hafta#1} \\ \midrule
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+
+  {\large Medipol Üniversitesi / Görsel İletişim Tasarımı}\\[2cm]
+
+  {\Huge \bfseries \color{ana} Bir Varmış Bir Yokmuş}\\[1cm]
+
+  {\Large Türk Masalları Derlemesi Web Sayfası}\\[0.5cm]
+  {\large Vize Raporu}\\[3cm]
+
+  {\textbf{Ders:} Programlamaya Giriş}\\[0.3cm]
+  {\textbf{Öğretim Üyesi:} Meral Şentürk}\\[1.5cm]
+
+  {\textbf{Hazırlayan:} Azra Hoşgör}\\[0.3cm]
+  {\textbf{Öğrenci No:} 86230024}\\[2cm]
+
+  \vfill
+
+  \fbox{\parbox{0.8\textwidth}{\centering\vspace{6pt}
+    {\large\textbf{Proje Bağlantıları}}\\[8pt]
+    \textbf{YouTube sunum videosu:}\\
+    \url{https://www.youtube.com/watch?v=VIDEO-KIMLIGI}\vspace{6pt}}}
+
+  \vfill
+  {\large \today}
+\end{titlepage}
+
+\begin{singlespace}
+\tableofcontents
+\end{singlespace}
+\newpage
+
+\section{Giriş}
+Bu projede, Türk halk anlatı geleneğinden seçtiğim sekiz masalı bir araya getiren \textit{Bir Varmış Bir Yokmuş} adlı bir web sayfası hazırladım. Amacım, masalları ekranda rahatça okunabilecek, aranabilecek ve türüne göre süzülebilecek bir derleme hâline getirmekti. Sayfanın görsel dilini kilim ve halılardaki renklerden ve motiflerden (lale, göz, koçboynuzu, su yolu) yola çıkarak kendim tasarladım. Bütün sayfa tek bir HTML dosyasından oluşuyor. Stil kodları \texttt{<style>}, betik kodları ise \texttt{<script>} etiketi içinde yazıldı. Dışarıdan hiçbir yazı tipi, görsel ya da kütüphane yüklenmediği için sayfa internet bağlantısı olmadan da çalışıyor. JavaScript; arama, tür süzme, okuma ayarları, gece modu ve kaldığın yerden devam etme gibi işlevleri yerine getiriyor. Raporda sırasıyla masal seçimimi, tasarım kararlarımı, kodun nasıl çalıştığını, yapay zekâ kullanımımı, haftalık çalışmalarımı ve test sonuçlarımı anlatıyorum.
+
+\subsection{Proje Özeti}
+\textit{Bir Varmış Bir Yokmuş}, sekiz Türk halk masalını kart görünümünde listeleyen ve seçilen masalı ayrı bir okuma ekranında açan tek sayfalık bir web uygulamasıdır. Kullanıcı masalları başlık, kahraman ya da metin içindeki bir kelimeyle arayabilir; Keloğlan, Hayvan, Dev ve Olağanüstü türleri arasında süzebilir ya da ``Bana bir masal seç'' düğmesiyle rastgele bir masal açabilir. Okuma ekranında yazı boyutu ve satır aralığı ayarlanabilir, gece moduna geçilebilir ve önceki/sonraki masala atlanabilir. Sayfa, her masalda ne kadar okunduğunu tarayıcıda saklar ve bir sonraki girişte ``Kaldığın yerden devam et'' önerir.
+
+\subsection{Gereksinimlerin Karşılanması}
+\begin{center}
+\rowcolors{2}{acik}{white}
+\begin{tabular}{p{9cm}c}
+\toprule
+\rowcolor{ana}\baslik{Gereksinim} & \baslik{Durum} \\
+\midrule
+Masal sayısı 8--12 arasında (8 masal) & \isaret \\
+Tek HTML dosyası & \isaret \\
+Stil kodları içsel (\texttt{<style>} içinde) & \isaret \\
+Betik kodları içsel (\texttt{<script>} içinde) & \isaret \\
+İnternetsiz açılıp çalışıyor & \isaret \\
+JavaScript sayfada anlamlı bir işlev görüyor & \isaret \\
+Masal metinleri kendi cümlelerimle yazıldı & \kutu \\
+Sayfa telefonda da düzgün görünüyor & \kutu \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Masalların Seçimi}
+Masalları seçerken üç ölçüte dikkat ettim: Türk halk anlatı geleneğinde bilinen ve dilden dile aktarılan masallar olmaları, farklı türlerden (Keloğlan, hayvan, dev ve olağanüstü masalları) örnekler sunmaları ve her birinin okura bırakacağı bir ders taşıması. Böylece sayfadaki tür süzme düğmeleri de anlamlı hâle geldi.
+
+\begin{longtable}{c p{3.6cm} p{2.4cm} p{6.6cm}}
+\toprule
+\textbf{No} & \textbf{Masal} & \textbf{Tür} & \textbf{Seçilme nedeni} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{No} & \textbf{Masal} & \textbf{Tür} & \textbf{Seçilme nedeni} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1 & Keloğlan ve Kabak Gelin & Keloğlan & Türk masallarının en tanınan kahramanı Keloğlan'ı derlemeye katmak ve tembelliğin sonucunu mizahla anlatması. \\
+2 & Horozun Emanet Yolculuğu & Hayvan & Zincirleme (birikimli) anlatımın güzel bir örneği olması; tekrarlarla ilerleyen yapısı sesli okumaya çok uygun. \\
+3 & Kurnaz Kurt ve Köylüler & Hayvan & Köy hayatını ve topluluk içinde birlik olmayı anlatması. \\
+4 & Korkak Adamın Devlerle Macerası & Dev & Gücün değil aklın kazandığı dev masallarına örnek olması ve eğlenceli kurnazlıkları. \\
+5 & Sihirli İnek ve Altın Ayakkabı & Olağanüstü & Konuşan hayvan ve sihirli yardımcı gibi olağanüstü masal ögelerini barındırması; iyilik ve sabır teması. \\
+6 & Bir Vuruşta Altmış Aslan & Dev & Küçük bir çocuğun özgüven ve zekâsıyla devleri yönetmesi; 4. masalla benzer motifleri karşılaştırma imkânı. \\
+7 & Yeraltı Sarayındaki Prenses & Olağanüstü & Kadın kahramanın kendi yolculuğuna çıktığı bir masal olması ve tekerlemeli, şiirsel bölümleri. \\
+8 & Tembel Oğlan ve Sihirli Havlu & Olağanüstü & Çalışmanın ve öğüt dinlemenin ödüllendirilmesi; geleneksel uzun kapanış tekerlemesini içermesi. \\
+\end{longtable}
+
+\section{Tasarım Kararları}
+Tasarımı sıfırdan kendim yaptım; hazır taslak (şablon) kullanılmadı. Bütün kararlarımda süslemeden önce masalın rahat okunmasını gözettim.
+
+\subsection{Konuya Uygunluk}
+Sayfanın renklerini Türk halı ve kilimlerinden aldım: kök boya kırmızısı, aşı boyası (altın sarısı) ve çivit mavisi geleneksel dokumalarda en sık görülen renklerdir. Zemin için eski bir kitap sayfasını andıran kâğıt rengini seçtim; böylece okuyucu masalı bir kitaptan okuyormuş gibi hisseder. Görselleri dışarıdan almak yerine SVG ile kendim çizdim: başlıktaki \textbf{lale} Türk süsleme sanatının en bilinen çiçeği, kart numaralarının içinde durduğu \textbf{göz} motifi kilimlerde nazardan korunmayı, bölüm ayracındaki \textbf{koçboynuzu} ise güç ve bereketi simgeler. Başlığın altındaki ve sayfanın en altındaki \textbf{kilim şeridi} ile kartların üstündeki \textbf{zikzak} (su yolu) motifi de aynı dokuma geleneğinden gelir. Başlıkta ``Bir Varmış Bir Yokmuş'', altında ``Az gittik, uz gittik'' tekerlemesi, her masalın sonunda ise ``Onlar ermiş muradına'' kapanışı yer alır; böylece sayfa masal anlatıcılığının açılış ve kapanış geleneğini de taşır. Okuma ekranında ilk harfin büyük ve kırmızı yazılması, eski el yazması kitaplardaki süslü baş harf geleneğinden esinlenmiştir.
+
+\subsection{Renk Paleti ve Yazı Tipi}
+\begin{center}
+\rowcolors{2}{acik}{white}
+\begin{tabular}{p{3cm} l p{7.2cm}}
+\toprule
+\rowcolor{ana}\baslik{Ad} & \baslik{Kod} & \baslik{Nerede / neden kullandınız?} \\
+\midrule
+Kök boya kırmızısı & \texttt{\#9B1C1F} & Başlık zemini, düğmeler, masal başlıkları ve baş harf. Kilimlerde en çok kullanılan renk olduğu için ana renk seçildi. \\
+Aşı boyası (altın) & \texttt{\#C8963E} & Lale amblemi, okuma ilerleme çubuğu, ``Masaldan kalan'' kutusunun çizgisi ve odak çerçevesi. Kırmızıyı dengeleyen sıcak vurgu rengi. \\
+Çivit mavisi & \texttt{\#1F2A44} & Kilim şeridindeki göz motiflerinin içi. Geleneksel dokumalardaki dengeleyici koyu renk. \\
+Eski kâğıt & \texttt{\#F6EEDF} & Sayfa zemini. Uzun okumada saf beyaza göre gözü daha az yorar ve kitap hissi verir. \\
+Mürekkep kahvesi & \texttt{\#2A1B15} & Metin rengi. Saf siyah yerine koyu kahve, kâğıt zeminle daha yumuşak ama yüksek karşıtlık sağlar. \\
+Serif yazı tipi & -- & Başlıklar ve masal metni için Palatino / Georgia gibi sistemde hazır bulunan serif yazı tipleri. Kitap okuma hissi verir. \\
+Sans yazı tipi & -- & Düğmeler, arama kutusu ve etiketler için sistem yazı tipi (\texttt{system-ui}). Arayüz ögelerini masal metninden ayırır. \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ödev internetsiz çalışmayı şart koştuğu için dışarıdan yazı tipi yüklemedim; her cihazda bulunan sistem yazı tiplerini sıraladım. Gece modunda aynı renkler koyu zemine uygun tonlarla değiştirilir (örneğin zemin \texttt{\#17110F}, metin \texttt{\#EDE2D1}).
+
+\subsection{Okunabilirlik, Gezinme ve Duyarlı Tasarım}
+\begin{itemize}
+  \item \textbf{Okunabilirlik:} Masal metni varsayılan olarak 1.15\,rem boyutunda ve 1.75 satır aralığıyla yazılır. Satır uzunluğu en fazla yaklaşık 65 karakterle sınırlıdır (\texttt{max-width: 65ch}), çünkü çok uzun satırlar okumayı zorlaştırır. Metin rengiyle kart zemini arasındaki karşıtlık oranı yaklaşık 16:1, gece modunda yaklaşık 13,5:1'dir; bu değerler WCAG'nin önerdiği 4,5:1 sınırının çok üstündedir. Kullanıcı yazıyı altı kademe arasında büyütüp küçültebilir ve geniş satır aralığını açabilir.
+  \item \textbf{Gezinme:} Bütün masallar ilk ekranda numaralı kartlar hâlinde görünür. Kullanıcı arama kutusuna yazarak, tür düğmeleriyle süzerek ya da rastgele seçim düğmesiyle istediği masala bir iki tıklamada ulaşır. Okuma ekranında ``Tüm masallar'' düğmesi ile listeye, alttaki bağlantılarla önceki ve sonraki masala geçilir. Klavyede $\leftarrow$, $\rightarrow$ ve \texttt{Esc} tuşları, listede ise \texttt{/} tuşu arama kutusuna gider. Tarayıcının geri düğmesi de çalışır.
+  \item \textbf{Duyarlı tasarım:} Kartlar CSS Grid ile dizilir (\texttt{repeat(auto-fill, minmax(17rem, 1fr))}); bilgisayarda üç sütun olan liste, ekran daraldıkça kendiliğinden iki ve tek sütuna iner. 640 pikselden dar ekranlarda boşluklar azalır, okuma sayfasının kenar çizgileri kalkar, önceki/sonraki bağlantıları alt alta dizilir ve telefonda işe yaramayan klavye kısayolu ipucu gizlenir.
+  \item \textbf{Tutarlılık:} Bütün renkler, yazı tipleri ve gölgeler CSS değişkenlerinde (\texttt{:root}) bir kez tanımlanır ve her yerde aynı değişken kullanılır. Bütün başlıklar serif, bütün arayüz ögeleri sans yazı tipiyle yazılır. Tıklanabilir her şey üzerine gelindiğinde kırmızı çerçeve alır; kartlar ve okuma sayfası aynı köşe yuvarlaklığı, çizgi rengi ve gölgeyi paylaşır.
+\end{itemize}
+
+\subsection{Ekran Görüntüleri}
+\IfFileExists{bilgisayar.png}{%
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{bilgisayar.png}
+  \caption{Masal listesinin bilgisayardaki görünümü}
+\end{figure}}{[Ekran görüntüsü: bilgisayar.png]}
+
+\IfFileExists{okuma.png}{%
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{okuma.png}
+  \caption{Okuma ekranı}
+\end{figure}}{}
+
+\IfFileExists{telefon.png}{%
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{telefon.png}
+  \caption{Sayfanın telefondaki görünümü}
+\end{figure}}{
+
+[Ekran görüntüsü: telefon.png]}
+
+\section{Gerçekleştirme}
+
+\subsection{HTML Yapısı}
+Sayfa anlamsal (semantik) HTML etiketleriyle beş ana bölüme ayrılır:
+\begin{itemize}
+  \item \texttt{<header class="ust">}: Lale amblemi, ``Bir Varmış Bir Yokmuş'' başlığı (\texttt{<h1>}), tekerleme, gece modu düğmesi ve kilim şeridi.
+  \item \texttt{<section id="liste-ekrani">}: Kaldığın yerden devam kutusu, arama kutusu (\texttt{<input type="search">} ve ona bağlı \texttt{<label>}), tür düğmeleri ve masal kartlarının yer aldığı sıralı liste (\texttt{<ol>}). Kartlar JavaScript ile bu listenin içine eklenir.
+  \item \texttt{<article id="okuma-ekrani">}: Okuma ayarları araç çubuğu, masalın türü, başlığı, açılış tekerlemesi, paragrafları, kapanışı ve ``Masaldan kalan'' kutusu (\texttt{<aside>}); en altta önceki/sonraki bağlantılarını tutan \texttt{<nav>}.
+  \item \texttt{<footer class="alt">}: Sayfayı kapatan kilim şeridi.
+  \item Gizli bir \texttt{<svg>} içindeki \texttt{<defs>}: Lale, göz ve koçboynuzu motifleri ile kilim deseni burada bir kez çizilir, sayfada \texttt{<use>} etiketiyle tekrar kullanılır.
+\end{itemize}
+Liste ve okuma ekranı aynı dosyadadır; JavaScript bunlardan birini \texttt{hidden} özelliğiyle gizleyip diğerini gösterir. Erişilebilirlik için ``İçeriğe geç'' bağlantısı, \texttt{aria-label}, \texttt{aria-pressed} ve \texttt{aria-live} özellikleri kullanıldı.
+
+\subsection{İçsel CSS}
+CSS yedi bölüme ayrıldı: değişkenler, genel ayarlar, üst bölüm, liste ve kartlar, okuma ekranı, alt bilgi ve telefon ekranı. En önemli karar, renkleri ve okuma ayarlarını \textbf{CSS değişkenleri} olarak \texttt{:root} içinde tanımlamaktır. Gece modu için yalnızca bu değişkenlerin koyu karşılıkları \texttt{[data-tema="gece"]} seçicisinde yeniden yazılır; böylece tek bir özellik değişince bütün sayfa koyu temaya geçer. Düzen için kart listesinde \textbf{Grid}, araç çubukları ve kart içleri için \textbf{Flexbox} kullanıldı. Kartlardaki zikzak motifi resim yerine iki \texttt{linear-gradient} ile çizildi. Telefon için \texttt{@media (max-width: 640px)} kuralı, hareket hassasiyeti olan kullanıcılar için de \texttt{prefers-reduced-motion} kuralı eklendi.
+
+\begin{lstlisting}[caption={İçsel CSS'ten önemli bir bölüm: renk değişkenleri ve gece teması}]
+:root {
+  --kirmizi: #9B1C1F;   /* kok boya kirmizisi: ana renk */
+  --altin: #C8963E;     /* asi boyasi: vurgu rengi */
+  --kagit: #F6EEDF;     /* eski kagit rengi zemin */
+  --murekkep: #2A1B15;  /* metin rengi: koyu kahve */
+  /* JavaScript bu iki degeri degistirir */
+  --okuma-boyutu: 1.15rem;
+  --satir-araligi: 1.75;
+}
+/* Gece temasi: ayni degiskenlerin koyu karsiliklari */
+[data-tema="gece"] {
+  --kirmizi: #E8776B;
+  --kagit: #17110F;
+  --murekkep: #EDE2D1;
+}
+.masal-listesi {
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+}
+.okuma-metin p {
+  font-size: var(--okuma-boyutu);
+  line-height: var(--satir-araligi);
+  max-width: 65ch;      /* rahat satir uzunlugu */
+}
+\end{lstlisting}
+
+\subsection{İçsel JavaScript}
+Masallar, \texttt{MASALLAR} adlı bir dizi içinde nesneler olarak tutulur. Her nesnede \texttt{id}, \texttt{baslik}, \texttt{kategori}, \texttt{ozet}, paragraflardan oluşan \texttt{metin} dizisi, \texttt{kapanis} ve \texttt{ders} alanları bulunur. Kartlar ve tür düğmeleri bu veriden otomatik üretildiği için yeni bir masal eklemek için yalnızca diziye bir nesne eklemek yeterlidir.
+
+Önemli fonksiyonlar şunlardır:
+\begin{itemize}
+  \item \texttt{sadelestir()}: Türkçe harfleri sadeleştirir (ç$\to$c, ğ$\to$g, ı$\to$i \ldots). Böylece ``keloglan'' yazan kullanıcı da ``Keloğlan''ı bulur.
+  \item \texttt{suzulmusMasallar()} ve \texttt{listeyiCiz()}: Seçili türe ve arama kelimesine uyan masalları bulur, kartları çizer ve kaç sonuç bulunduğunu yazar. \texttt{vurgula()} aranan kelimeyi \texttt{<mark>} ile işaretler.
+  \item \texttt{masaliGoster()}: Okuma ekranını doldurur, önceki/sonraki bağlantılarını ayarlar ve yarıda bırakılmış masalı kaldığı yere kaydırır.
+  \item \texttt{ilerlemeyiGuncelle()}: Sayfa kaydırıldıkça üstteki ilerleme çubuğunu doldurur, okuma oranını \texttt{localStorage}'a kaydeder; \%92'yi geçen masalı ``Okundu'' olarak işaretler.
+  \item \texttt{ayarlariUygula()}: Yazı boyutu, satır aralığı ve gece modu seçimlerini CSS değişkenlerine aktarır ve tarayıcıda saklar.
+  \item \texttt{git()} ve \texttt{adresiIsle()}: Adres çubuğundaki \texttt{\#/masal/...} değerine göre hangi ekranın görüneceğine karar verir; böylece tarayıcının geri düğmesi de çalışır.
+\end{itemize}
+Olaylar \texttt{addEventListener} ile bağlanır: arama kutusunda \texttt{input}, düğmelerde \texttt{click}, sayfada \texttt{scroll} ve \texttt{keydown}. Tür düğmeleri için her düğmeye ayrı dinleyici yerine, düğmeleri saran kutuya tek bir dinleyici eklendi (olay yetkilendirme).
+
+\begin{lstlisting}[caption={İçsel JavaScript'ten önemli bir bölüm: Turkce harf duyarsiz arama ve okuma ayarlari}]
+// Turkce harfleri sadelestirir: "Keloglan" ile "keloglan" ayni sonucu verir
+function sadelestir(metin) {
+  let sonuc = "";
+  for (let i = 0; i < metin.length; i++) {
+    const harf = metin[i];
+    const kucuk = harf.toLowerCase();
+    sonuc += HARF_ESLESME[harf] || (kucuk.length === 1 ? kucuk : harf);
+  }
+  return sonuc;
+}
+
+// Arama kutusuna her harf yazildiginda liste yeniden cizilir
+el.arama.addEventListener("input", () => {
+  durum.arama = sadelestir(el.arama.value.trim());
+  listeyiCiz();
+});
+
+// Okuma ayarlarini CSS degiskenlerine aktarir ve tarayicida saklar
+function ayarlariUygula() {
+  const kok = document.documentElement;
+  kok.style.setProperty("--okuma-boyutu", YAZI_BOYUTLARI[ayarlar.boyut] + "rem");
+  kok.style.setProperty("--satir-araligi", ayarlar.genisSatir ? "2.05" : "1.75");
+  kok.dataset.tema = ayarlar.tema;
+  hafizayaYaz("masal-ayarlar", ayarlar);
+}
+\end{lstlisting}
+
+\subsection{Sayfanın Özellikleri}
+\begin{itemize}
+  \item \textbf{Arama:} Başlık, tür, özet ve masal metninin tamamında arama; Türkçe harflere duyarsız; bulunan kelime vurgulanır, kelime yalnızca metinde geçiyorsa kartta o bölümden kısa bir parça gösterilir.
+  \item \textbf{Tür süzme:} Tümü, Keloğlan, Hayvan, Dev ve Olağanüstü düğmeleri; her düğmede o türdeki masal sayısı yazar.
+  \item \textbf{Bana bir masal seç:} Rastgele bir masal açar.
+  \item \textbf{Okuma ayarları:} Altı kademeli yazı boyutu, geniş satır aralığı ve gece modu. Seçimler tarayıcıda saklanır; ilk açılışta gece modu cihazın karanlık mod ayarına göre seçilir.
+  \item \textbf{Okuma ilerlemesi:} Üstteki altın renkli çubuk, masalın ne kadarının okunduğunu gösterir.
+  \item \textbf{Kaldığın yerden devam et:} Yarıda bırakılan masal listede önerilir ve açılınca kaldığı yere kayar. Kartlarda ``Okundu'' ya da okunma yüzdesi etiketi görünür.
+  \item \textbf{Tahmini okuma süresi:} Kelime sayısından hesaplanır (dakikada yaklaşık 170 kelime).
+  \item \textbf{Masallar arası gezinme:} Önceki/sonraki bağlantıları, klavye kısayolları ($\leftarrow$, $\rightarrow$, \texttt{Esc}, \texttt{/}) ve tarayıcının geri düğmesi.
+  \item \textbf{Erişilebilirlik:} ``İçeriğe geç'' bağlantısı, klavye odak çerçevesi, ekran okuyucular için etiketler ve hareketi azaltma tercihine uyum.
+\end{itemize}
+
+\section{Yapay Zekâ Kullanımı}
+
+\begin{longtable}{p{2.5cm} p{2.6cm} p{5cm} p{3.6cm}}
+\toprule
+\textbf{Araç} & \textbf{Ne için kullandınız?} & \textbf{İstem (prompt) özeti} & \textbf{Sayfada nerede?} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Araç} & \textbf{Ne için kullandınız?} & \textbf{İstem (prompt) özeti} & \textbf{Sayfada nerede?} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Claude (Anthropic) & Kod & Verdiğim 8 masal metniyle kırmızı renkli, Türk motifli, tek HTML dosyasında arama ve süzme özellikli bir masal sayfası hazırlaması & HTML yapısı, içsel CSS ve JavaScript \\
+Claude (Anthropic) & Metin (rapor) & Web sayfasının kodundan rapor şablonunu doldurması & Rapor, Bölüm 1--4 \\
+\end{longtable}
+
+\subsection{Anladığım ve Kendim Yaptığım Kısımlar}
+[Anladığım ve kendim yaptığım kısımlar.]
+
+\section{Haftalık Katkılar}
+
+\begin{longtable}{p{1.9cm} p{6.6cm} p{5.6cm}}
+\toprule
+\rowcolor{ana}\baslik{Hafta} & \baslik{Yapılan çalışma} & \centering\baslik{Görsel}\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+\rowcolor{ana}\baslik{Hafta} & \baslik{Yapılan çalışma} & \centering\baslik{Görsel}\tabularnewline
+\midrule
+\endhead
+\hafta{1}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{2}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{3}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{4}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{5}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{6}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{7}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\hafta{8}{[tarih]}{[Bu hafta yaptığınız çalışma.]}{[mesaj veya bağlantı]}{\kutu}{\kutu}
+\end{longtable}
+
+\section{Test ve Değerlendirme}
+
+\begin{center}
+\rowcolors{2}{acik}{white}
+\begin{tabular}{p{6.4cm} p{3.6cm} p{3.6cm}}
+\toprule
+\rowcolor{ana}\baslik{Özellik} & \baslik{Bilgisayar} & \baslik{Telefon} \\
+\midrule
+Arama (Türkçe harfsiz yazınca da bulma, vurgulama) & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Tür süzme ve ``Bana bir masal seç'' & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Yazı boyutu ve geniş satır & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Gece modu & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Okuma ilerleme çubuğu ve kaldığın yerden devam & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Önceki / sonraki masal ve tarayıcının geri düğmesi & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+Klavye kısayolları ($\leftarrow$, $\rightarrow$, Esc, /) & [Çalışıyor / Sorun var] & Telefonda klavye olmadığı için gizlendi \\
+İnternet kapalıyken açılma & [Çalışıyor / Sorun var] & [Çalışıyor / Sorun var] \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Denenen tarayıcılar:} [Chrome, Firefox, Edge, Safari vb.]
+
+\section{Sunum Videosu}
+\begin{tabular}{@{}ll}
+\textbf{Video süresi:} & [dakika:saniye] \quad {\color{gray}\itshape (12--18 dakika olmalıdır)} \\
+\textbf{Görünürlük:} & [Listelenmemiş / Herkese açık] \\
+\textbf{Bağlantı:} & \url{https://www.youtube.com/watch?v=VIDEO-KIMLIGI} \\
+\end{tabular}
+
+\subsection{Video Kontrol Listesi}
+\begin{itemize}
+  \item \kutu\ Süre 12--18 dakika aralığında.
+  \item \kutu\ Sunum boyunca kameram açık, yüzüm görünüyor.
+  \item \kutu\ Görünürlük \textbf{Listelenmemiş} (ya da Herkese açık); \textbf{Özel} değil.
+  \item \kutu\ Bağlantıyı gizli pencerede açtım, video oynuyor.
+  \item \kutu\ YouTube videoyu işlemeyi bitirdi.
+  \item \kutu\ Videoyu baştan sona izledim; ses ve kamera tüm sunumda var.
+  \item \kutu\ Kapaktaki bağlantı ile bu bölümdeki bağlantı aynı.
+\end{itemize}
+
+\section{Sonuç ve Kendi Değerlendirmem}
+
+[Sonuç metni.]
+
+\section{Kaynakça}
+
+\begin{thebibliography}{9}
+  \bibitem{k1} [Yazar. (Yıl). \textit{Kitap adı}. Yayınevi, Yer.]
+  \bibitem{k2} [Site adı. \textit{Sayfa başlığı}. Bağlantı, erişim tarihi.]
+  \bibitem{mdn-css} MDN Web Docs. \textit{Using CSS custom properties (variables)}. \url{https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties}, erişim tarihi: [tarih].
+  \bibitem{mdn-grid} MDN Web Docs. \textit{CSS grid layout}. \url{https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout}, erişim tarihi: [tarih].
+  \bibitem{mdn-storage} MDN Web Docs. \textit{Window: localStorage property}. \url{https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}, erişim tarihi: [tarih].
+  \bibitem{mdn-svg} MDN Web Docs. \textit{<pattern> (SVG)}. \url{https://developer.mozilla.org/en-US/docs/Web/SVG/Element/pattern}, erişim tarihi: [tarih].
+  \bibitem{wcag} W3C. \textit{Web Content Accessibility Guidelines (WCAG) 2.1, Contrast (Minimum)}. \url{https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html}, erişim tarihi: [tarih].
+\end{thebibliography}
+
+\appendix
+\section{Teslim Kontrol Listesi}
+\begin{itemize}
+  \item \kutu\ MEBİS'e \textbf{yalnızca bu raporun PDF'ini} yükleyeceğim. ZIP ve HTML dosyası yüklemeyeceğim.
+  \item \kutu\ PDF dosya adı \texttt{86230024\_Azra\_Hoşgör\_vize.pdf} biçiminde.
+  \item \kutu\ Kapaktaki GitHub ve YouTube bağlantıları doğru; PDF'te tıklayıp denedim.
+  \item \kutu\ GitHub deposunda web sayfası (tek \texttt{.html}), rapor PDF'i, \texttt{.tex} kaynakları ve \texttt{README.md} var.
+  \item \kutu\ GitHub deposu \textbf{herkese açık} (ya da öğretim üyesine erişim verdim).
+  \item \kutu\ Çalışmamın son hâli teslim saatinden \textbf{önce} depoya gönderildi (sonraki commitler değerlendirilmez).
+  \item \kutu\ Sayfa içsel CSS ve içsel JavaScript kullanıyor, harici dosya gerektirmiyor.
+  \item \kutu\ Hazır taslak kullanmadım; yapay zekâ kullandıysam Bölüm 5'i doldurdum.
+  \item \kutu\ Çalışmanın mantığını sunumda anlatabilirim.
+\end{itemize}
+
+\end{document}
